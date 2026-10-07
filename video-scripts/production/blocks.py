@@ -28,7 +28,7 @@ blk(2, "build", "loc_corridor", ["char_you"], "s1",
     ("DETAIL", "ECU", "the open round hatch at the end of the module leading to an empty docking port, a small yellow paper note stuck on its frame", "the paper note flutters in the air flow, a light blinks"),
     ("CU", None, "your shocked face with mouth wide open in a silent gasp, SPROUT floating past next to your head", "your jaw drops and your eyes go wide, hands on cheeks"))
 blk(3, "build", "loc_exterior", ["prop_sprout"], "s1",
-    "Você é o único ser humano fora da Terra: quatrocentos quilômetros acima de todos, viajando a vinte e oito mil quilômetros por hora.",
+    "Você é o único humano fora da Terra: quatrocentos quilômetros acima de todos, viajando a vinte e oito mil quilômetros por hora.",
     ("WIDE", "MEDIUM", "the space station gliding above the curving blue Earth, solar panels glinting against black starry space", "the station slides slowly across the frame while Earth turns below"),
     ("CU", "ECU", "a small round station window seen from outside, your tiny face and SPROUT pressed against the glass", "you blink and press your palms on the glass, Earth light sweeping over the window"),
     ("TOP", None, "overhead view looking down on the tiny station far above the enormous Earth", "the station drifts forward, clouds sliding past underneath"))
@@ -38,7 +38,7 @@ blk(4, "build", "loc_cupola", ["char_you"], "s1",
     ("CU", "ECU", "your worried face lit blue by the Earth, a single sweat drop floating away from your forehead", "the sweat drop wobbles away, your eyes dart sideways"),
     ("DETAIL", None, "SPROUT floating in front of the big round window, its leaves trembling", "the little pot spins gently, leaves quivering"))
 blk(5, "build", "loc_mcc", ["char_you"], "s1",
-    "A boa notícia: em Houston, o controle da missão acompanha a estação vinte e quatro horas por dia.",
+    "A boa notícia: em Houston, engenheiros do controle da missão monitoram a estação vinte e quatro horas por dia, sem descanso.",
     ("WIDE", "MEDIUM", "an empty mission control room on Earth with rows of desks, the giant wall screen showing a live video call of you waving from the station", "the screens flicker, the orbit dot on a side map moves, you wave on the big screen"),
     ("CU", "DETAIL", "a desk console with a blinking microphone, a coffee mug and a headset", "the microphone light blinks, steam curls up from the mug"),
     ("MEDIUM", None, "on the big video screen, you holding SPROUT up to the camera with a nervous grin", "you lift the pot closer to the camera and give a shaky grin"))
@@ -127,11 +127,11 @@ blk(22, "build", "loc_mcc", ["char_you"], "s3",
     ("CU", "ECU", "a mission control monitor showing a small sensor icon with a red cross mark", "the red cross flips into a green check mark"),
     ("MEDIUM", "CU", "the big screen video call: you wearing a headset, listening and nodding, SPROUT beside you", "you nod along slowly and exhale"),
     ("WIDE", None, "the empty mission control room as every screen turns from red to calm green", "the screens change color from red to green one by one"))
-blk(23, "turn", "loc_cupola", ["char_you"], "s4",
+blk(23, "turn", "loc_cupola", ["char_you", "prop_pouch"], "s4",
     "Lembra do trigésimo dia? O pior perigo da solidão no espaço não são os ossos nem a água, é a sua própria mente.",
     ("MEDIUM", "CU", "you floating very still at the dome window, small against the dark night side of the Earth", "you drift a little closer to the glass, perfectly quiet"),
     ("ECU", "MACRO", "your eyes glistening, the planet reflected in them", "a slow blink, the reflection shimmers"),
-    ("WIDE", None, "the dome window seen from inside, your lonely silhouette and SPROUT against the vast Earth", "the Earth turns slowly while you stay still"))
+    ("WIDE", None, "the dome window seen from inside, your lonely silhouette, a drink pouch drifting nearby and SPROUT against the vast Earth", "the Earth turns slowly while you stay still"))
 blk(24, "build", "loc_galley", ["char_you"], "s4",
     "Pesquisadores que estudam bases na Antártida e submarinos chamam isso de efeito do terceiro quarto, quando o ânimo despenca no meio da missão.",
     ("CU", "ECU", "you slumped at the galley table with your chin on your hand, looking bored", "you sigh deeply and your head slides off your hand"),
