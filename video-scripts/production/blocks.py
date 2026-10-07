@@ -177,20 +177,26 @@ def shots(b):
             out.append(f"{punch}: {motion} (punch-in)")
     return out
 
+# Final cut: 1.5 minutes (9 blocks) chosen from the 30-block plan, renumbered 1..9.
+CUT = [1, 2, 3, 4, 5, 6, 23, 28, 30]
+ROLES = ["hook", "build", "build", "build", "build", "build", "turn", "build", "payoff"]
+
+
 def manifest():
     blocks = []
-    for b in B:
+    for new_n, (orig, role) in enumerate(zip(CUT, ROLES), start=1):
+        b = dict(B[orig - 1], n=new_n, arc_role=role)
         blocks.append(dict(n=b["n"], arc_role=b["arc_role"], vo_line=b["vo"], location=b["location"],
                            through_line_state=SPROUT[b["sprout"]], shots=shots(b),
                            assets_used=[b["location"]] + b["assets"] + (["prop_sprout"] if "prop_sprout" not in b["assets"] else [])))
-    builds = [b["n"] for b in B if b["arc_role"] == "build"]
+    builds = [b["n"] for b in blocks if b["arc_role"] == "build"]
     return dict(topic="O que aconteceria se você ficasse sozinho na Estação Espacial Internacional",
                 genre="education", animation_mode="fully_animated", channel_type="Explainer",
                 style="Bright flat 2D cartoon explainer (custom)",
                 through_line=dict(name="a potted sprout aboard the station", asset="prop_sprout",
                                   progression="two leaves, then four leaves, a taller stem, a bud, an opening bud",
                                   resolution="it blooms with a yellow flower back on Earth"),
-                arc=dict(hook=1, build=builds, turn=23, payoff=30), blocks=blocks,
+                arc=dict(hook=1, build=builds, turn=7, payoff=9), blocks=blocks,
                 sources=["https://space.com/astronaut-pee-iss-water-recycling-98-percent-milestone",
                          "https://pubmed.ncbi.nlm.nih.gov/15125798/",
                          "https://www.nasa.gov/international-space-station/space-station-facts-and-figures/",
