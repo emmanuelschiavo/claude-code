@@ -28,7 +28,7 @@ blk(2, "build", "loc_corridor", ["char_you"], "s1",
     ("DETAIL", "ECU", "the open round hatch at the end of the module leading to an empty docking port, a small yellow paper note stuck on its frame", "the paper note flutters in the air flow, a light blinks"),
     ("CU", None, "your shocked face with mouth wide open in a silent gasp, SPROUT floating past next to your head", "your jaw drops and your eyes go wide, hands on cheeks"))
 blk(3, "build", "loc_exterior", ["prop_sprout"], "s1",
-    "Você é o único ser humano fora da Terra, a quatrocentos quilômetros de altura, viajando a vinte e oito mil quilômetros por hora.",
+    "Você é o único ser humano fora da Terra: quatrocentos quilômetros acima de todos, viajando a vinte e oito mil quilômetros por hora.",
     ("WIDE", "MEDIUM", "the space station gliding above the curving blue Earth, solar panels glinting against black starry space", "the station slides slowly across the frame while Earth turns below"),
     ("CU", "ECU", "a small round station window seen from outside, your tiny face and SPROUT pressed against the glass", "you blink and press your palms on the glass, Earth light sweeping over the window"),
     ("TOP", None, "overhead view looking down on the tiny station far above the enormous Earth", "the station drifts forward, clouds sliding past underneath"))
@@ -38,7 +38,7 @@ blk(4, "build", "loc_cupola", ["char_you"], "s1",
     ("CU", "ECU", "your worried face lit blue by the Earth, a single sweat drop floating away from your forehead", "the sweat drop wobbles away, your eyes dart sideways"),
     ("DETAIL", None, "SPROUT floating in front of the big round window, its leaves trembling", "the little pot spins gently, leaves quivering"))
 blk(5, "build", "loc_mcc", ["char_you"], "s1",
-    "A boa notícia: em Houston, os engenheiros do controle da missão acompanham a estação vinte e quatro horas, todos os dias.",
+    "A boa notícia: em Houston, o controle da missão acompanha a estação vinte e quatro horas por dia.",
     ("WIDE", "MEDIUM", "an empty mission control room on Earth with rows of desks, the giant wall screen showing a live video call of you waving from the station", "the screens flicker, the orbit dot on a side map moves, you wave on the big screen"),
     ("CU", "DETAIL", "a desk console with a blinking microphone, a coffee mug and a headset", "the microphone light blinks, steam curls up from the mug"),
     ("MEDIUM", None, "on the big video screen, you holding SPROUT up to the camera with a nervous grin", "you lift the pot closer to the camera and give a shaky grin"))
