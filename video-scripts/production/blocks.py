@@ -128,7 +128,7 @@ blk(22, "build", "loc_mcc", ["char_you"], "s3",
     ("MEDIUM", "CU", "the big screen video call: you wearing a headset, listening and nodding, SPROUT beside you", "you nod along slowly and exhale"),
     ("WIDE", None, "the empty mission control room as every screen turns from red to calm green", "the screens change color from red to green one by one"))
 blk(23, "turn", "loc_cupola", ["char_you", "prop_pouch"], "s4",
-    "Lembra do trigésimo dia? O pior perigo da solidão no espaço não são os ossos nem a água, é a sua própria mente.",
+    "No trigésimo dia chega a verdade: o pior perigo da solidão espacial não é o corpo, e sim a sua própria mente.",
     ("MEDIUM", "CU", "you floating very still at the dome window, small against the dark night side of the Earth", "you drift a little closer to the glass, perfectly quiet"),
     ("ECU", "MACRO", "your eyes glistening, the planet reflected in them", "a slow blink, the reflection shimmers"),
     ("WIDE", None, "the dome window seen from inside, your lonely silhouette, a drink pouch drifting nearby and SPROUT against the vast Earth", "the Earth turns slowly while you stay still"))
@@ -153,7 +153,7 @@ blk(27, "build", "loc_exterior", ["prop_sprout"], "s4",
     ("DETAIL", "ECU", "a camera lens poking out of a round station window, SPROUT visible behind the glass", "the camera flashes twice"),
     ("WIDE", None, "the station tiny over the curve of the Earth at sunrise", "the sunrise glow spreads across the horizon"))
 blk(28, "build", "loc_exterior", ["prop_capsule"], "s4",
-    "No quadragésimo quinto dia, a janela mostra o ponto brilhante crescendo, e o rádio anuncia: cápsula de resgate a duzentos metros.",
+    "No quadragésimo quinto dia, a janela mostra o ponto brilhante, e o rádio anuncia: cápsula de resgate a duzentos metros.",
     ("CU", "ECU", "a bright white dot growing larger against the black starry sky, SPROUT in the station window at the edge of frame", "the dot grows and glints"),
     ("MEDIUM", "CU", "the white rescue capsule with its orange heat shield approaching, small thruster puffs", "thrusters puff as the capsule eases closer"),
     ("WIDE", None, "the capsule lining up with the station docking port above the blue Earth", "the capsule glides in slowly toward the port"))
