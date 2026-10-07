@@ -23,7 +23,7 @@ blk(1, "hook", "loc_sleep", ["char_you"], "s1",
     ("CU", "ECU", "close on your face peeking out of the sleeping bag, one eyebrow raised, SPROUT velcroed to the wall beside you", "you cup a hand behind your ear to listen, eyebrows slowly rising"),
     ("MEDIUM", None, "low angle, you unzipping the sleeping bag and pushing off toward the cabin opening", "you drift out of the bag with both arms stretched forward"))
 blk(2, "build", "loc_corridor", ["char_you"], "s1",
-    "Você flutua pelos módulos procurando a tripulação, mas a cápsula de retorno sumiu e só restou um bilhete pedindo desculpas.",
+    "Você flutua pelos módulos procurando a tripulação, mas a cápsula de retorno sumiu e só sobrou o bilhete de desculpas na parede.",
     ("WIDE", "MEDIUM", "the long empty station module lined with white racks and yellow handrails, you floating in from the far end", "you glide forward slowly, head swiveling to look around"),
     ("DETAIL", "ECU", "the open round hatch at the end of the module leading to an empty docking port, a small yellow paper note stuck on its frame", "the paper note flutters in the air flow, a light blinks"),
     ("CU", None, "your shocked face with mouth wide open in a silent gasp, SPROUT floating past next to your head", "your jaw drops and your eyes go wide, hands on cheeks"))
@@ -48,7 +48,7 @@ blk(6, "build", "loc_mcc", ["char_you", "prop_capsule"], "s1",
     ("WIDE", "MEDIUM", "the mission control room with every screen showing a simple calendar grid whose pages tear off one by one", "calendar pages peel off and flutter down on the screens"),
     ("CU", None, "on the big video screen, your face sighing and then giving a determined thumbs up, SPROUT beside you", "you exhale, then raise a thumbs up with a firm nod"))
 blk(7, "build", "loc_corridor", ["char_you", "char_rescuer"], "s1",
-    "A estação tem o tamanho de um campo de futebol e foi planejada para uma equipe de seis ou sete pessoas, não uma.",
+    "A estação mede cento e nove metros de largura e foi planejada para seis ou sete pessoas, e agora tem só você.",
     ("MEDIUM", "CU", "you floating alone in the middle of the module with arms spread wide to show the empty space, SPROUT strapped to a rack", "you spread your arms wider and turn slowly in place"),
     ("WIDE", "MEDIUM", "lateral view of the whole module where six faded ghost-like outlines of crew members fade away, leaving only empty handrails", "the pale outlines fade out one by one until the module is empty"),
     ("TOP", None, "overhead view straight down the module, you tiny among the racks", "you drift slowly along the module, cables swaying"))
@@ -57,8 +57,8 @@ blk(8, "build", "loc_galley", ["char_you"], "s1",
     ("WIDE", "MEDIUM", "the compact space kitchen module, you pulling open a drawer as dozens of silver food packets burst out like confetti", "food packets tumble out and spin through the air around you"),
     ("CU", "ECU", "your delighted face surrounded by spinning silver food packets", "you grin wide and catch a packet with one hand"),
     ("DETAIL", None, "SPROUT velcroed to the fold-out table next to a neat stack of food packets", "a packet bumps the stack, the leaves bob"))
-blk(9, "build", "loc_galley", ["char_you"], "s1",
-    "Astronautas comem tortilhas em vez de pão porque as migalhas flutuam e acabam entrando nos equipamentos e até nos olhos.",
+blk(9, "build", "loc_galley", ["char_you", "prop_pouch"], "s1",
+    "Astronautas comem tortilhas em vez de pão porque as migalhas flutuam e acabam entrando em equipamentos e até nos olhos.",
     ("MEDIUM", "CU", "you at the galley table biting into a soft round tortilla, a few crumbs drifting away toward an air vent", "you chew happily as crumbs drift off toward the vent"),
     ("MACRO", "ECU", "tiny crumbs floating toward a metal air vent grille", "the crumbs swirl and get sucked toward the grille"),
     ("CU", None, "a single crumb bonking you right in the eye, SPROUT on the table behind you", "you wince and rub your eye with a fist"))
@@ -67,7 +67,7 @@ blk(10, "build", "loc_water", ["char_you", "prop_pouch"], "s1",
     ("WIDE", "MEDIUM", "the life-support module wall packed with clear pipes and tanks around the glowing water recycling machine, you floating in front of it", "bubbles travel through the pipes, the machine pulses with light"),
     ("DETAIL", "MACRO", "a single shiny water droplet traveling through a clear pipe and through a filter", "the droplet slides along the pipe and passes through the glowing filter"),
     ("MEDIUM", None, "you staring suspiciously at a silver drink pouch, SPROUT clipped to a pipe nearby", "you sniff the pouch, then take a hesitant sip through the straw"))
-blk(11, "build", "loc_water", ["char_you", "prop_pouch"], "s1",
+blk(11, "build", "loc_water", ["prop_pouch", "char_you"], "s1",
     "O sistema recupera cerca de noventa e oito por cento dessa água, então o café de ontem vira a bebida de amanhã.",
     ("CU", "ECU", "your face pulling a disgusted grimace while holding the drink pouch", "you grimace, then shrug and sip again"),
     ("MEDIUM", "CU", "the round gauge on the water recycling machine with its needle climbing almost to full and a green check mark symbol", "the needle sweeps up and the check mark pops in"),
@@ -93,22 +93,22 @@ blk(15, "build", "loc_corridor", ["char_you", "prop_pouch"], "s2",
     ("DETAIL", "ECU", "a wall light panel switching from warm daytime yellow to dim night blue", "the panel light fades smoothly from yellow to blue"),
     ("WIDE", None, "you marching in mid-air down the module like a soldier, drink pouch clipped to your belt, SPROUT on a rack", "you march with exaggerated knee lifts while floating forward"))
 blk(16, "build", "loc_gym", ["char_you"], "s2",
-    "Seu corpo começa a sumir, porque sem gravidade os ossos podem perder cerca de um por cento da massa a cada mês.",
+    "Sem gravidade, os ossos do seu quadril podem perder cerca de três por cento da massa a cada dois meses.",
     ("WIDE", "MEDIUM", "the exercise module with treadmill and weight machine, you floating past with floppy noodle arms", "your arms wobble loosely like noodles as you drift"),
     ("CU", "ECU", "a simple cartoon x-ray view of your leg bone with small holes appearing in it", "little holes pop into the bone one after another"),
     ("MEDIUM", None, "you poking your arm muscle, which deflates like a balloon, SPROUT strapped to the treadmill rail", "the muscle sags as you poke it, your face drops"))
-blk(17, "build", "loc_gym", ["char_you"], "s3",
+blk(17, "build", "loc_gym", ["char_you", "prop_pouch"], "s3",
     "Por isso astronautas se exercitam cerca de duas horas por dia, correndo numa esteira presos com elásticos para não sair flutuando.",
     ("MEDIUM", "CU", "you jogging on the treadmill held down by bungee cords clipped to a harness on your hips", "you run in place, the bungee cords stretching with each step"),
     ("DETAIL", "MACRO", "sweat droplets floating off your forehead as little spheres", "the round droplets drift away and wobble"),
     ("WIDE", None, "you pushing the cylinder weight machine with huge effort, SPROUT strapped to the machine frame", "you push the bar up slowly, cheeks puffed"))
 blk(18, "build", "loc_sleep", ["char_you", "prop_sock"], "s3",
-    "Os líquidos do corpo sobem para a cabeça, seu rosto fica inchado e suas pernas ficam finas como as de um passarinho.",
+    "Os líquidos do corpo sobem para a cabeça, seu rosto fica inchado e suas pernas ficam finas como palitos de picolé.",
     ("MEDIUM", "CU", "you looking into a small cabin mirror at your face puffed up round like a balloon", "your cheeks puff a little more as you stare"),
-    ("WIDE", "MEDIUM", "you floating in the cabin with a big round head on top of skinny bird-like legs, SPROUT on the wall", "you wiggle your thin legs and look down at them"),
-    ("DETAIL", None, "your very thin legs in grey socks kicking like a bird's legs", "the legs kick and twitch comically"))
+    ("WIDE", "MEDIUM", "you floating in the cabin with a big round head on top of legs as skinny as popsicle sticks, SPROUT on the wall", "you wiggle your thin legs and look down at them"),
+    ("DETAIL", None, "your stick-thin legs in grey socks kicking in the air", "the legs kick and twitch comically"))
 blk(19, "build", "loc_corridor", ["char_you", "prop_sprout"], "s3",
-    "Na segunda semana, às três da manhã, um alarme dispara e a tela vermelha mostra uma única palavra assustadora: atmosfera.",
+    "Na segunda semana, às três da manhã, o alarme dispara e a tela vermelha mostra uma única palavra assustadora: atmosfera.",
     ("CU", "ECU", "a module wall panel flashing red with a big warning triangle symbol", "the warning triangle flashes red on and off"),
     ("WIDE", "MEDIUM", "the whole module bathed in pulsing red light, you shooting in from the far end in pajamas", "red light pulses as you zoom forward"),
     ("CU", None, "your terrified face lit red, SPROUT floating behind you", "your eyes widen and your hair stands up"))
@@ -118,12 +118,12 @@ blk(20, "build", "loc_hatch", ["char_you"], "s3",
     ("DETAIL", "ECU", "a tiny pebble of space junk streaking toward a station hull panel", "the pebble speeds in and sparks against the panel"),
     ("CU", None, "a cooling pipe hissing out a puff of green gas next to you, SPROUT on the wall", "the green gas puffs out and you lean back"))
 blk(21, "build", "loc_hatch", ["char_you", "char_rescuer"], "s3",
-    "Cada emergência exige uma equipe, um medindo a pressão, outro fechando escotilhas e um terceiro falando com a Terra, e você faz tudo.",
+    "Cada emergência pede três pessoas: a primeira mede a pressão, a segunda fecha escotilhas e a terceira avisa a Terra.",
     ("MEDIUM", "CU", "you frantically swimming between wall panels while a headset cord tangles around you", "you spin and the cord wraps around your arm"),
     ("DETAIL", "ECU", "your hand spinning a round hatch wheel shut", "the wheel turns fast and locks"),
     ("WIDE", None, "you stretched like a starfish between the pressure gauge, a hatch wheel and the headset microphone, SPROUT on the wall", "you strain to reach all three at once"))
 blk(22, "build", "loc_mcc", ["char_you"], "s3",
-    "Por sorte era só um sensor com defeito, e o controle da missão te guia com calma até o alarme finalmente silenciar.",
+    "Por sorte era apenas o sensor de pressão com defeito, e o controle da missão te guia com calma até o alarme silenciar.",
     ("CU", "ECU", "a mission control monitor showing a small sensor icon with a red cross mark", "the red cross flips into a green check mark"),
     ("MEDIUM", "CU", "the big screen video call: you wearing a headset, listening and nodding, SPROUT beside you", "you nod along slowly and exhale"),
     ("WIDE", None, "the empty mission control room as every screen turns from red to calm green", "the screens change color from red to green one by one"))
@@ -138,12 +138,12 @@ blk(24, "build", "loc_galley", ["char_you"], "s4",
     ("DETAIL", "MACRO", "a tablet showing a simple line chart that dips deep in the middle, no numbers", "the line draws itself and dives into the dip"),
     ("MEDIUM", None, "you doodling a snowy research hut and a little submarine on the tablet, SPROUT on the table", "you sketch lazily with a stylus"))
 blk(25, "build", "loc_galley", ["char_you", "prop_sock"], "s4",
-    "Sem ninguém por perto, você começa a conversar com um fantoche de meia, que sinceramente parece bem preocupado com você.",
+    "Sem ninguém por perto, você começa a conversar com uma meia transformada em fantoche, que sinceramente parece bem preocupada com você.",
     ("MEDIUM", "CU", "you at the galley table with a striped sock puppet on your hand, gesturing at it", "you gesture with your free hand, the puppet tilts its head"),
     ("DETAIL", "ECU", "the sock puppet's big button eyes looking worried", "the puppet's head tilts slowly sideways"),
     ("WIDE", None, "you and the sock puppet sharing a floating snack at the table, SPROUT beside them", "a snack floats between you and the puppet"))
-blk(26, "build", "loc_cupola", ["char_you"], "s4",
-    "Muitos astronautas descrevem algo que salva a cabeça: olhar a Terra frágil, sem fronteiras, sabendo que todo mundo que você ama está lá.",
+blk(26, "build", "loc_cupola", ["char_you", "prop_sock"], "s4",
+    "Muitos astronautas contam o remédio para isso: olhar a Terra frágil, sem fronteiras, sabendo que todas as pessoas amadas estão lá embaixo.",
     ("CU", "ECU", "your face softening into a gentle smile as city lights glow on the Earth below", "your smile grows slowly, light glinting in your eyes"),
     ("WIDE", "MEDIUM", "the dome windows framing the Earth with its thin glowing blue atmosphere line and no borders", "the Earth turns slowly, the atmosphere line shimmering"),
     ("DETAIL", None, "SPROUT floating against the window with the planet behind it", "the bud sways softly"))
@@ -153,7 +153,7 @@ blk(27, "build", "loc_exterior", ["prop_sprout"], "s4",
     ("DETAIL", "ECU", "a camera lens poking out of a round station window, SPROUT visible behind the glass", "the camera flashes twice"),
     ("WIDE", None, "the station tiny over the curve of the Earth at sunrise", "the sunrise glow spreads across the horizon"))
 blk(28, "build", "loc_exterior", ["prop_capsule"], "s4",
-    "No dia quarenta e cinco um ponto brilhante cresce na janela, e o rádio chia: cápsula de resgate a duzentos metros.",
+    "No dia quarenta e cinco, a janela mostra o ponto brilhante crescendo, e o rádio chia: cápsula de resgate a duzentos metros.",
     ("CU", "ECU", "a bright white dot growing larger against the black starry sky, SPROUT in the station window at the edge of frame", "the dot grows and glints"),
     ("MEDIUM", "CU", "the white rescue capsule with its orange heat shield approaching, small thruster puffs", "thrusters puff as the capsule eases closer"),
     ("WIDE", None, "the capsule lining up with the station docking port above the blue Earth", "the capsule glides in slowly toward the port"))
@@ -170,12 +170,11 @@ blk(30, "payoff", "loc_home", ["char_you"], "s6",
 
 def shots(b):
     out = []
-    s = SPROUT[b["sprout"]]
     for i, (base, punch, desc, motion) in enumerate(b["clips"]):
-        d = desc.replace("SPROUT", s)
+        d = desc.replace("SPROUT", "the plant pot")
         out.append(f"{base}: {d}")
         if punch:
-            out.append(f"{punch} punch-in on the same shot as {motion}")
+            out.append(f"{punch}: {motion} (punch-in)")
     return out
 
 def manifest():
