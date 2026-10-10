@@ -1,0 +1,857 @@
+<title>Precificação de Produto</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: cabeçalho com o nome do produto como título; abas; à esquerda os dados, à direita o painel de resultado fixo. */
+:root {
+  --bg: #EEF2F0;
+  --surface: #FFFFFF;
+  --surface-2: #F6F8F7;
+  --ink: #14201C;
+  --muted: #5B6863;
+  --line: #D9E0DD;
+  --accent: #1E5A48;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DCEBE5;
+  --brass: #9A6B22;
+  --good: #23784A;
+  --warn: #A9701A;
+  --bad: #B03C2A;
+  --seg-1: #1E5A48; --seg-2: #4F8C78; --seg-3: #9A6B22; --seg-4: #C9A15E;
+  --seg-5: #7A8C86; --seg-6: #B6C2BD; --seg-7: #B03C2A; --seg-8: #6B4FA0;
+  --shadow: 0 1px 2px rgba(20,32,28,.06), 0 8px 24px rgba(20,32,28,.06);
+  --f-display: "Young Serif", Georgia, "Times New Roman", serif;
+  --f-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1412; --surface: #151D1A; --surface-2: #1A2420; --ink: #E6EDEA; --muted: #95A39D;
+    --line: #27332E; --accent: #62B89C; --accent-ink: #0E1412; --accent-soft: #1D3229; --brass: #D7A659;
+    --good: #5CC08A; --warn: #E0A84A; --bad: #E8735E;
+    --seg-1: #62B89C; --seg-2: #3E7D69; --seg-3: #D7A659; --seg-4: #9C7A3E;
+    --seg-5: #7E8E88; --seg-6: #4A5853; --seg-7: #E8735E; --seg-8: #A58BD6;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1412; --surface: #151D1A; --surface-2: #1A2420; --ink: #E6EDEA; --muted: #95A39D;
+  --line: #27332E; --accent: #62B89C; --accent-ink: #0E1412; --accent-soft: #1D3229; --brass: #D7A659;
+  --good: #5CC08A; --warn: #E0A84A; --bad: #E8735E;
+  --seg-1: #62B89C; --seg-2: #3E7D69; --seg-3: #D7A659; --seg-4: #9C7A3E;
+  --seg-5: #7E8E88; --seg-6: #4A5853; --seg-7: #E8735E; --seg-8: #A58BD6;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; }
+header.top { display: grid; gap: 6px; margin-bottom: 22px; }
+.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass); font-weight: 700; }
+#productName {
+  font-family: var(--f-display); font-size: clamp(28px, 5vw, 44px); line-height: 1.1; color: var(--ink);
+  background: transparent; border: 0; border-bottom: 1px dashed var(--line); padding: 2px 0 6px; width: 100%; outline: none;
+}
+#productName:focus { border-bottom-color: var(--accent); }
+.sub { color: var(--muted); max-width: 70ch; margin: 0; }
+
+.tabs { display: inline-flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab { font: 600 14px var(--f-body); color: var(--muted); background: transparent; border: 0; padding: 9px 18px; border-radius: 999px; cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+.tab:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.col { display: grid; gap: 16px; min-width: 0; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 18px 20px; min-width: 0; }
+.panel h2 { font-family: var(--f-display); font-weight: 400; font-size: 20px; margin: 0 0 4px; text-wrap: balance; }
+.panel .hint { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px 14px; }
+.field { display: grid; gap: 5px; min-width: 0; }
+.field label, .lbl { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
+.field small { color: var(--muted); font-size: 12px; }
+.inp { position: relative; display: flex; align-items: center; }
+.inp .pre, .inp .suf { position: absolute; font: 500 13px var(--f-num); color: var(--muted); pointer-events: none; }
+.inp .pre { left: 11px; } .inp .suf { right: 11px; }
+input[type="number"], input[type="text"], select {
+  width: 100%; font: 500 15px var(--f-num); color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; min-width: 0;
+}
+select { font-family: var(--f-body); font-weight: 500; }
+.inp.has-pre input { padding-left: 34px; }
+.inp.has-suf input { padding-right: 30px; }
+input[type="number"] { -moz-appearance: textfield; }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; flex-wrap: wrap; }
+.seg button { font: 600 13px var(--f-body); background: var(--surface-2); color: var(--muted); border: 0; padding: 8px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+
+.costs { display: grid; gap: 8px; }
+.cost-row { display: grid; grid-template-columns: auto minmax(0, 1fr) 120px; gap: 12px; align-items: center; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); border: 1px solid transparent; }
+.cost-row.off { opacity: .55; }
+.cost-row .name { font-weight: 600; font-size: 14px; }
+.cost-row .desc { color: var(--muted); font-size: 12px; }
+.switch { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+@media (max-width: 460px) { .cost-row { grid-template-columns: auto minmax(0, 1fr); } .cost-row .inp { grid-column: 2; } }
+
+.note { font-size: 12.5px; color: var(--muted); background: var(--surface-2); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 12px; margin-top: 12px; }
+.note b { color: var(--ink); }
+.taxchip { display: inline-flex; gap: 6px; align-items: baseline; font: 500 13px var(--f-num); background: var(--accent-soft); color: var(--accent); padding: 4px 10px; border-radius: 999px; margin-top: 12px; }
+
+/* Painel de resultado */
+.result { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); display: grid; gap: 16px; }
+@media (max-width: 900px) { .result { position: static; } }
+.hero { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); display: grid; gap: 16px; }
+.hero .k { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.levers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lever input { font-size: 22px; font-weight: 500; padding-block: 10px; }
+.lever.primary input { border-color: var(--accent); }
+.range { width: 100%; accent-color: var(--accent); }
+.status { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pill { font: 600 12px var(--f-body); padding: 4px 10px; border-radius: 999px; border: 1px solid currentColor; }
+.pill.good { color: var(--good); } .pill.warn { color: var(--warn); } .pill.bad { color: var(--bad); }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.kpi { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.kpi .v { font: 500 16px var(--f-num); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.kpi .l { font-size: 11.5px; color: var(--muted); }
+@media (max-width: 420px) { .kpis { grid-template-columns: 1fr 1fr; } .levers { grid-template-columns: 1fr; } }
+
+.bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+.bar span { height: 100%; transition: width .25s ease; }
+@media (prefers-reduced-motion: reduce) { .bar span { transition: none; } }
+table.brk { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.brk td { padding: 7px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.brk td.n { text-align: right; font-family: var(--f-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.brk td.p { text-align: right; color: var(--muted); font-family: var(--f-num); font-size: 12px; width: 62px; white-space: nowrap; }
+table.brk tr.total td { font-weight: 700; border-bottom: 0; padding-top: 10px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 8px; vertical-align: 0; }
+
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cmp .box { border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.cmp .box.hl { border-color: var(--accent); background: var(--accent-soft); }
+.cmp .big { font: 500 22px var(--f-num); font-variant-numeric: tabular-nums; }
+.tablewrap { overflow-x: auto; }
+table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 340px; }
+table.tbl th { text-align: right; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 6px; border-bottom: 1px solid var(--line); }
+table.tbl th:first-child, table.tbl td:first-child { text-align: left; }
+table.tbl td { text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--line); font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+table.tbl tr.cur td { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.foot { color: var(--muted); font-size: 12px; margin-top: 28px; max-width: 80ch; }
+header.top .row { display: flex; gap: 16px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; }
+header.top .row > div { display: grid; gap: 6px; flex: 1 1 420px; min-width: 0; }
+.pdfbtn { display: inline-flex; align-items: center; gap: 10px; font: 700 14px var(--f-body); letter-spacing: .01em; color: var(--accent-ink); background: var(--accent); border: 0; border-radius: 12px; padding: 12px 18px; cursor: pointer; box-shadow: var(--shadow); }
+.pdfbtn:hover { filter: brightness(1.08); }
+.pdfbtn:disabled { opacity: .6; cursor: progress; }
+.pdfbtn svg { width: 18px; height: 18px; }
+.toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translateX(-50%); background: var(--ink); color: var(--bg); font: 600 13px var(--f-body); padding: 10px 16px; border-radius: 10px; box-shadow: var(--shadow); max-width: calc(100% - 32px); z-index: 10; }
+.loc { margin-top: 10px; border-radius: 12px; background: var(--surface-2); padding: 10px; display: grid; gap: 10px; }
+.loc .head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding-inline: 0; }
+.loc .per { font: 500 14px var(--f-num); color: var(--accent); white-space: nowrap; }
+.loc .fields { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.loc.off .fields, .loc.off .per { opacity: .55; }
+.linkbtn { font: 600 13px var(--f-body); background: none; border: 1px solid var(--line); color: var(--ink); padding: 7px 12px; border-radius: 9px; cursor: pointer; }
+.linkbtn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Simulador de preço · custo × venda</span>
+    <div class="row"><div>
+    <input id="productName" type="text" value="Garrafa térmica inox 1 L (exemplo)" aria-label="Nome do produto" placeholder="Nome do produto">
+    </div>
+    <button type="button" class="pdfbtn" id="pdfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Salvar PDF</button>
+    </div>
+    <p class="sub">Preencha o custo, escolha o regime e o estado, ajuste os custos de venda. Mexa na margem ou no preço final: um calcula o outro.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Modo">
+    <button class="tab" role="tab" id="tab-direta" aria-selected="true" aria-controls="view-direta">Venda direta</button>
+    <button class="tab" role="tab" id="tab-rev" aria-selected="false" aria-controls="view-rev">Revendedor</button>
+  </div>
+
+  <div class="grid">
+    <!-- ENTRADAS (compartilhadas pelas duas abas) -->
+    <div class="col">
+      <section class="panel" aria-labelledby="h-custo">
+        <h2 id="h-custo">Custo do produto</h2>
+        <p class="hint">Valores por unidade. Frete e extras são opcionais.</p>
+        <div class="fields">
+          <div class="field"><label for="custo">Custo efetivo</label>
+            <div class="inp has-pre"><span class="pre">R$</span><input id="custo" type="number" inputmode="decimal" step="0.01" min="0" value="42.90"></div></div>
+          <div class="field"><label for="freteCompra">Frete de compra (opcional)</label>
+            <div class="inp has-pre"><span class="pre">R$</span><input id="freteCompra" type="number" inputmode="decimal" step="0.01" min="0" value="4.50"></div></div>
+          <div class="field"><label for="extras">Outros extras (opcional)</label>
+            <div class="inp has-pre"><span class="pre">R$</span><input id="extras" type="number" inputmode="decimal" step="0.01" min="0" value="0"></div>
+            <small>Etiqueta, personalização, seguro…</small></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-imp">
+        <h2 id="h-imp">Impostos sobre a venda</h2>
+        <p class="hint">Escolha o regime da sua empresa e o estado. As alíquotas vêm preenchidas e podem ser editadas.</p>
+        <div class="fields">
+          <div class="field"><label for="regime">Regime tributário</label>
+            <select id="regime">
+              <option value="simples1">Simples Nacional · Comércio (Anexo I)</option>
+              <option value="simples2">Simples Nacional · Indústria (Anexo II)</option>
+              <option value="mei">MEI</option>
+              <option value="pf">Pessoa física</option>
+              <option value="presumido">Lucro Presumido</option>
+              <option value="manual">Alíquota manual</option>
+            </select></div>
+          <div class="field"><label for="origem">Estado da empresa (origem)</label><select id="origem"></select></div>
+          <div class="field"><label for="operacao">Tipo de venda</label>
+            <select id="operacao">
+              <option value="interna">Dentro do estado</option>
+              <option value="cf">Outro estado · consumidor final</option>
+              <option value="contrib">Outro estado · empresa (contribuinte)</option>
+            </select></div>
+          <div class="field" id="f-destino"><label for="destino">Estado de destino</label><select id="destino"></select></div>
+        </div>
+
+        <div class="fields" id="box-simples" style="margin-top:12px">
+          <div class="field"><label for="rbt12">Faturamento últimos 12 meses</label>
+            <div class="inp has-pre"><span class="pre">R$</span><input id="rbt12" type="number" inputmode="decimal" step="1000" min="0" value="360000"></div>
+            <small id="faixaTxt"></small></div>
+          <div class="field"><label for="simplesOverride">Alíquota efetiva (editar se souber)</label>
+            <div class="inp has-suf"><input id="simplesOverride" type="number" step="0.01" min="0" placeholder="automática"><span class="suf">%</span></div>
+            <small>Deixe vazio para calcular pela tabela.</small></div>
+        </div>
+
+        <div class="fields" id="box-presumido" style="margin-top:12px">
+          <div class="field"><label for="icms">ICMS</label>
+            <div class="inp has-suf"><input id="icms" type="number" step="0.01" min="0"><span class="suf">%</span></div>
+            <small id="icmsTxt"></small></div>
+          <div class="field"><label for="pis">PIS</label><div class="inp has-suf"><input id="pis" type="number" step="0.01" min="0" value="0.65"><span class="suf">%</span></div></div>
+          <div class="field"><label for="cofins">COFINS</label><div class="inp has-suf"><input id="cofins" type="number" step="0.01" min="0" value="3"><span class="suf">%</span></div></div>
+          <div class="field"><label for="irpj">IRPJ + CSLL</label><div class="inp has-suf"><input id="irpj" type="number" step="0.01" min="0" value="2.28"><span class="suf">%</span></div>
+            <small>Presunção de 8% e 12% no comércio.</small></div>
+          <label class="field" style="align-content:end"><span class="lbl">Produto importado</span>
+            <span style="display:flex;gap:8px;align-items:center"><input id="importado" type="checkbox" class="switch"> ICMS interestadual 4%</span></label>
+        </div>
+
+        <div class="fields" id="box-mei" style="margin-top:12px">
+          <div class="field"><label for="mei_das">DAS mensal do MEI</label>
+            <div class="inp has-pre"><span class="pre">R$</span><input id="mei_das" data-k="mei.das" type="number" step="0.01" min="0"></div>
+            <small>Comércio: 5% do salário mínimo + R$ 1 de ICMS.</small></div>
+          <div class="field"><label for="mei_vendas">Unidades vendidas por mês</label>
+            <div class="inp"><input id="mei_vendas" data-k="mei.vendas" type="number" step="1" min="1"></div>
+            <small>O DAS é dividido entre elas.</small></div>
+        </div>
+
+        <div class="fields" id="box-pf" style="margin-top:12px">
+          <div class="field"><label for="pf_venda">Imposto sobre a venda</label>
+            <div class="inp has-suf"><input id="pf_venda" data-k="pf.venda" type="number" step="0.1" min="0"><span class="suf">%</span></div>
+            <small>Normalmente 0% para pessoa física.</small></div>
+          <div class="field"><label for="pf_ir">IR sobre o lucro (reserva)</label>
+            <div class="inp has-suf"><input id="pf_ir" data-k="pf.ir" type="number" step="0.5" min="0"><span class="suf">%</span></div>
+            <small>Tabela do IR vai de 0% a 27,5%.</small></div>
+        </div>
+
+        <div class="fields" id="box-manual" style="margin-top:12px">
+          <div class="field"><label for="manual">Carga total de impostos</label>
+            <div class="inp has-suf"><input id="manual" type="number" step="0.01" min="0" value="10"><span class="suf">%</span></div></div>
+        </div>
+
+        <span class="taxchip">Impostos: <b id="taxTotal">0%</b></span>
+        <div class="note" id="taxNote"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-venda">
+        <h2 id="h-venda">Outros custos da venda</h2>
+        <p class="hint">Custos que aparecem em quase toda venda além do imposto. Desmarque o que não se aplica.</p>
+        <div class="costs" id="costs"></div>
+        <div class="loc" id="locBox">
+          <div class="head">
+            <input type="checkbox" class="switch" id="loc_on" aria-label="Ativar locomoção">
+            <label for="loc_on" style="min-width:0;cursor:pointer"><div class="name" style="font-weight:600;font-size:14px">Locomoção para entrega pessoal</div>
+              <div class="desc" style="color:var(--muted);font-size:12px">Combustível, desgaste do carro, pedágio e estacionamento</div></label>
+            <span class="per" id="locPer">–</span>
+          </div>
+          <div class="fields">
+            <div class="field"><label for="loc_km">Distância ida e volta</label><div class="inp has-suf"><input id="loc_km" data-k="loc.km" type="number" step="1" min="0"><span class="suf">km</span></div></div>
+            <div class="field"><label for="loc_kml">Consumo do veículo</label><div class="inp has-suf"><input id="loc_kml" data-k="loc.kml" type="number" step="0.5" min="0.1" style="padding-right:44px"><span class="suf">km/l</span></div></div>
+            <div class="field"><label for="loc_comb">Combustível</label><div class="inp has-pre has-suf"><span class="pre">R$</span><input id="loc_comb" data-k="loc.comb" type="number" step="0.01" min="0" style="padding-right:30px"><span class="suf">/l</span></div></div>
+            <div class="field"><label for="loc_desg">Desgaste e manutenção</label><div class="inp has-pre has-suf"><span class="pre">R$</span><input id="loc_desg" data-k="loc.desg" type="number" step="0.05" min="0" style="padding-right:40px"><span class="suf">/km</span></div></div>
+            <div class="field"><label for="loc_extra">Pedágio e estacionamento</label><div class="inp has-pre"><span class="pre">R$</span><input id="loc_extra" data-k="loc.extra" type="number" step="0.5" min="0"></div></div>
+            <div class="field"><label for="loc_unid">Unidades entregues na viagem</label><div class="inp"><input id="loc_unid" data-k="loc.unid" type="number" step="1" min="1"></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result">
+      <div id="view-direta" role="tabpanel" aria-labelledby="tab-direta" class="col">
+        <div class="hero">
+          <span class="k">Venda direta</span>
+          <div class="levers">
+            <div class="field lever" id="lv-m"><label for="margem">Margem de lucro líquida</label>
+              <div class="inp has-suf"><input id="margem" type="number" step="0.5" value="20"><span class="suf">%</span></div></div>
+            <div class="field lever" id="lv-p"><label for="preco">Preço final de venda</label>
+              <div class="inp has-pre"><span class="pre">R$</span><input id="preco" type="number" step="0.01" min="0"></div></div>
+          </div>
+          <input class="range" id="margemRange" type="range" min="0" max="60" step="0.5" value="20" aria-label="Ajustar margem">
+          <div class="status" id="statusD"></div>
+          <div class="kpis">
+            <div class="kpi"><div class="v" id="kLucro">–</div><div class="l">Lucro por unidade</div></div>
+            <div class="kpi"><div class="v" id="kMarkup">–</div><div class="l">Markup sobre custo</div></div>
+            <div class="kpi"><div class="v" id="kMin">–</div><div class="l">Preço mínimo (0 lucro)</div></div>
+          </div>
+        </div>
+        <section class="panel">
+          <h2>Para onde vai cada real</h2>
+          <p class="hint">Composição do preço de venda.</p>
+          <div class="bar" id="barD"></div>
+          <table class="brk" id="brkD" style="margin-top:12px"></table>
+        </section>
+      </div>
+
+      <div id="view-rev" role="tabpanel" aria-labelledby="tab-rev" class="col" hidden>
+        <div class="hero">
+          <span class="k">Venda por revendedor</span>
+          <div class="levers">
+            <div class="field"><label for="comissao">Comissão do revendedor</label>
+              <div class="inp has-suf"><input id="comissao" type="number" step="0.5" min="0" value="15"><span class="suf">%</span></div></div>
+            <div class="field"><span class="lbl">Comissão calculada sobre</span>
+              <div class="seg" role="group" aria-label="Base da comissão">
+                <button type="button" id="baseVenda" aria-pressed="true">Preço de venda</button>
+                <button type="button" id="baseLucro" aria-pressed="false">Lucro</button>
+              </div></div>
+          </div>
+          <div class="levers">
+            <div class="field lever" id="lv-mr"><label for="margemR">Meu lucro líquido (margem)</label>
+              <div class="inp has-suf"><input id="margemR" type="number" step="0.5" value="20"><span class="suf">%</span></div></div>
+            <div class="field lever" id="lv-pr"><label for="precoR">Preço que o revendedor vende</label>
+              <div class="inp has-pre"><span class="pre">R$</span><input id="precoR" type="number" step="0.01" min="0"></div></div>
+          </div>
+          <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted)">
+            <input id="revPaga" type="checkbox" class="switch" style="margin-top:2px">
+            <span>O revendedor paga taxa de cartão, marketplace e marketing da venda dele</span></label>
+          <div class="status" id="statusR"></div>
+          <div class="cmp">
+            <div class="box"><div class="l lbl">Comissão por unidade</div><div class="big" id="rCom">–</div></div>
+            <div class="box hl"><div class="l lbl">Meu lucro por unidade</div><div class="big" id="rLucro">–</div></div>
+            <div class="box"><div class="l lbl">Preço na venda direta</div><div class="big" id="rDireto">–</div></div>
+            <div class="box"><div class="l lbl">Diferença revendedor × direta</div><div class="big" id="rDiff">–</div></div>
+          </div>
+        </div>
+        <section class="panel">
+          <h2>Composição do preço do revendedor</h2>
+          <p class="hint">Inclui a comissão, os impostos da nota e o seu lucro.</p>
+          <div class="bar" id="barR"></div>
+          <table class="brk" id="brkR" style="margin-top:12px"></table>
+        </section>
+        <section class="panel">
+          <h2>Tabela de comissões</h2>
+          <p class="hint">Preço que o revendedor precisa praticar para você manter a margem escolhida.</p>
+          <div class="tablewrap"><table class="tbl" id="tblR"></table></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">Estimativa para planejamento, não substitui o seu contador. Alíquotas modais de ICMS de 2026 por estado, sem FCP adicional nem benefícios fiscais por produto. Em 2026 a CBS (0,9%) e o IBS (0,1%) da reforma tributária aparecem na nota em caráter de teste e são compensados, sem custo extra. A partir de 2027 a CBS substitui PIS e COFINS e esta conta muda.
+  <br><br><button type="button" class="linkbtn" id="reset">Restaurar valores de exemplo</button></p>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+(() => {
+  // Alíquota interna modal de ICMS por estado (2026). Editável na tela.
+  const UF = [
+    ["AC","Acre",19],["AL","Alagoas",20.5],["AP","Amapá",18],["AM","Amazonas",20],["BA","Bahia",20.5],
+    ["CE","Ceará",20],["DF","Distrito Federal",20],["ES","Espírito Santo",17],["GO","Goiás",19],
+    ["MA","Maranhão",23],["MT","Mato Grosso",17],["MS","Mato Grosso do Sul",17],["MG","Minas Gerais",18],
+    ["PA","Pará",19],["PB","Paraíba",20],["PR","Paraná",19.5],["PE","Pernambuco",20.5],["PI","Piauí",22.5],
+    ["RJ","Rio de Janeiro",22],["RN","Rio Grande do Norte",20],["RS","Rio Grande do Sul",17],
+    ["RO","Rondônia",19.5],["RR","Roraima",20],["SC","Santa Catarina",17],["SP","São Paulo",18],
+    ["SE","Sergipe",20],["TO","Tocantins",20]
+  ];
+  const ICMS = Object.fromEntries(UF.map(u => [u[0], u[2]]));
+  const SUL_SUDESTE = new Set(["SP","RJ","MG","PR","SC","RS"]); // ES fica de fora para fins de 7%
+  const SIMPLES = {
+    simples1: [[180000,4,0],[360000,7.3,5940],[720000,9.5,13860],[1800000,10.7,22500],[3600000,14.3,87300],[4800000,19,378000]],
+    simples2: [[180000,4.5,0],[360000,7.8,5940],[720000,10,13860],[1800000,11.2,22500],[3600000,14.7,85500],[4800000,30,720000]],
+  };
+  const REGIMES = { simples1:"Simples Nacional · Comércio", simples2:"Simples Nacional · Indústria", mei:"MEI", pf:"Pessoa física", presumido:"Lucro Presumido", manual:"Alíquota manual" };
+  const OPS = { interna:"Dentro do estado", cf:"Outro estado · consumidor final", contrib:"Outro estado · empresa" };
+  const COSTS = [
+    { id:"cartao",    name:"Taxa de cartão / gateway / PIX", desc:"Maquininha, link de pagamento, antecipação", kind:"pct", v:3.5, on:true,  sale:true },
+    { id:"market",    name:"Comissão de marketplace",          desc:"Mercado Livre, Shopee, Amazon (11% a 20%)",   kind:"pct", v:14,  on:false, sale:true },
+    { id:"mkt",       name:"Marketing e anúncios",             desc:"Tráfego pago, influenciador, cupons",          kind:"pct", v:5,   on:true,  sale:true },
+    { id:"fixas",     name:"Despesas fixas rateadas",          desc:"Aluguel, contador, sistema, pró-labore",       kind:"pct", v:10,  on:true  },
+    { id:"perdas",    name:"Perdas, trocas e devoluções",      desc:"Avarias, garantia, inadimplência",             kind:"pct", v:2,   on:true  },
+    { id:"embalagem", name:"Embalagem",                        desc:"Caixa, sacola, fita, etiqueta",                kind:"brl", v:3,   on:true  },
+    { id:"freteEnv",  name:"Frete de envio pago por você",     desc:"Frete grátis ou subsídio ao cliente",          kind:"brl", v:0,   on:false },
+  ];
+  const DEFAULTS = {
+    productName:"Garrafa térmica inox 1 L (exemplo)", custo:42.9, freteCompra:4.5, extras:0,
+    regime:"simples1", origem:"SC", operacao:"interna", destino:"SP", rbt12:360000, simplesOverride:"",
+    icms:"", pis:0.65, cofins:3, irpj:2.28, importado:false, manual:10,
+    mei:{ das:82.05, vendas:30 }, pf:{ venda:0, ir:7.5 },
+    loc:{ on:false, km:20, kml:10, comb:6.29, desg:0.30, extra:0, unid:1 },
+    costs: Object.fromEntries(COSTS.map(c => [c.id, { v:c.v, on:c.on }])),
+    margem:20, preco:null, lockD:"m",
+    comissao:15, base:"venda", margemR:20, precoR:null, lockR:"m", revPaga:false, tab:"direta"
+  };
+  const KEY = "precificacao-v2";
+  const clone = o => JSON.parse(JSON.stringify(o));
+  let S;
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    S = Object.assign(clone(DEFAULTS), saved);
+    for (const k of ["mei","pf","loc"]) S[k] = Object.assign(clone(DEFAULTS[k]), saved[k] || {});
+  } catch { S = clone(DEFAULTS); }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+
+  const $ = id => document.getElementById(id);
+  const num = v => { const n = parseFloat(String(v).replace(",", ".")); return isFinite(n) ? n : 0; };
+  const brl = v => isFinite(v) ? v.toLocaleString("pt-BR", { style:"currency", currency:"BRL" }) : "—";
+  const pct = (v, d=1) => isFinite(v) ? (v*100).toLocaleString("pt-BR", { minimumFractionDigits:d, maximumFractionDigits:d }) + "%" : "—";
+  const dec = (v, d=2) => Number(v).toLocaleString("pt-BR", { maximumFractionDigits:d });
+  const p2 = v => (Math.round(v*100)/100).toFixed(2);
+
+  for (const sel of ["origem","destino"]) {
+    $(sel).innerHTML = UF.map(([uf, n, a]) => `<option value="${uf}">${uf} · ${n} (${String(a).replace(".", ",")}%)</option>`).join("");
+  }
+  $("costs").innerHTML = COSTS.map(c => `
+    <div class="cost-row" id="row-${c.id}">
+      <input type="checkbox" class="switch" id="on-${c.id}" aria-label="Ativar ${c.name}">
+      <label for="on-${c.id}" style="min-width:0;cursor:pointer"><div class="name">${c.name}</div><div class="desc">${c.desc}</div></label>
+      <div class="inp ${c.kind === "pct" ? "has-suf" : "has-pre"}">
+        ${c.kind === "brl" ? '<span class="pre">R$</span>' : ""}
+        <input type="number" id="v-${c.id}" step="${c.kind === "pct" ? "0.1" : "0.01"}" min="0" aria-label="Valor de ${c.name}">
+        ${c.kind === "pct" ? '<span class="suf">%</span>' : ""}
+      </div>
+    </div>`).join("");
+
+  // ---------- Impostos ----------
+  function simplesRate() {
+    const tbl = SIMPLES[S.regime]; const r = Math.max(num(S.rbt12), 0);
+    let i = tbl.findIndex(f => r <= f[0]); if (i < 0) i = tbl.length - 1;
+    const [, nom, ded] = tbl[i];
+    const ef = r > 0 ? Math.max((r * nom/100 - ded) / r, 0) : nom/100;
+    return { faixa: i+1, nom, ef: i === 0 ? nom/100 : ef };
+  }
+  function icmsAuto() {
+    if (S.operacao === "interna") return { r: ICMS[S.origem], txt: `Alíquota interna de ${S.origem}.` };
+    if (S.operacao === "contrib") {
+      if (S.importado) return { r: 4, txt: "Interestadual para produto importado." };
+      const sete = SUL_SUDESTE.has(S.origem) && !SUL_SUDESTE.has(S.destino);
+      return { r: sete ? 7 : 12, txt: `Interestadual ${S.origem} para ${S.destino}.` };
+    }
+    return { r: ICMS[S.destino], txt: `Interestadual + DIFAL: carga total igual à alíquota interna de ${S.destino}.` };
+  }
+  // pct: % sobre o preço · fix: R$ por unidade · profit: % sobre o lucro
+  function taxes() {
+    const t = { pct: [], fix: [], profit: 0 };
+    if (S.regime.startsWith("simples")) {
+      const s = simplesRate();
+      const ov = String(S.simplesOverride).trim() === "" ? null : num(S.simplesOverride)/100;
+      t.simples = s; t.pct.push(["Simples Nacional (DAS)", ov ?? s.ef]);
+    } else if (S.regime === "presumido") {
+      const ic = String(S.icms).trim() === "" ? icmsAuto().r : num(S.icms);
+      t.pct.push(["ICMS", ic/100], ["PIS + COFINS", (num(S.pis)+num(S.cofins))/100], ["IRPJ + CSLL", num(S.irpj)/100]);
+    } else if (S.regime === "mei") {
+      t.fix.push(["DAS MEI (rateado)", num(S.mei.das) / Math.max(num(S.mei.vendas), 1)]);
+    } else if (S.regime === "pf") {
+      if (num(S.pf.venda) > 0) t.pct.push(["Imposto sobre a venda", num(S.pf.venda)/100]);
+      t.profit = num(S.pf.ir)/100;
+    } else t.pct.push(["Impostos", num(S.manual)/100]);
+    t.pctTotal = t.pct.reduce((a, b) => a + b[1], 0);
+    t.fixTotal = t.fix.reduce((a, b) => a + b[1], 0);
+    return t;
+  }
+  function locPerUnit() {
+    const L = S.loc;
+    const viagem = num(L.km) / Math.max(num(L.kml), 0.1) * num(L.comb) + num(L.km) * num(L.desg) + num(L.extra);
+    return viagem / Math.max(num(L.unid), 1);
+  }
+
+  // ---------- Núcleo do cálculo ----------
+  function model(revSale) {
+    const t = taxes();
+    const pctItems = [], fixItems = [];
+    for (const c of COSTS) {
+      const st = S.costs[c.id]; if (!st.on) continue;
+      if (revSale && S.revPaga && c.sale) continue;
+      (c.kind === "pct" ? pctItems : fixItems).push([c.name, c.kind === "pct" ? num(st.v)/100 : num(st.v)]);
+    }
+    if (S.loc.on) fixItems.push(["Locomoção (entrega pessoal)", locPerUnit()]);
+    const produto = num(S.custo) + num(S.freteCompra) + num(S.extras);
+    const C = produto + fixItems.reduce((a, b) => a + b[1], 0) + t.fixTotal;
+    const V = t.pctTotal + pctItems.reduce((a, b) => a + b[1], 0);
+    return { t, pctItems, fixItems, produto, C, V };
+  }
+  function outcome(M, P, c=0, base="venda") {
+    const bruto = P*(1-M.V) - M.C;
+    const com = c > 0 ? (base === "lucro" ? c*Math.max(bruto, 0) : c*P) : 0;
+    const antesIR = bruto - com;
+    const ir = M.t.profit * Math.max(antesIR, 0);
+    const lucro = antesIR - ir;
+    return { P, com, ir, lucro, margem: P > 0 ? lucro/P : NaN };
+  }
+  // Preço que gera a margem m. A margem sobe com o preço, então basta uma busca binária.
+  function priceFor(M, m, c=0, base="venda") {
+    let lo = 0.000001, hi = Math.max(M.C, 1) * 1e5;
+    if (outcome(M, hi, c, base).margem < m) return NaN;
+    for (let i = 0; i < 200; i++) {
+      const mid = (lo + hi) / 2;
+      if (outcome(M, mid, c, base).margem < m) lo = mid; else hi = mid;
+    }
+    return hi;
+  }
+  function rowsFor(M, o, comLabel) {
+    const rows = [
+      ["Custo do produto + frete/extras", M.produto, "seg-6"],
+      ...M.fixItems.map(([n, v]) => [n, v, "seg-5"]),
+      ...M.t.fix.map(([n, v]) => [n, v, "seg-3"]),
+      ...M.t.pct.map(([n, r]) => [n, r*o.P, "seg-3"]),
+      ...M.pctItems.map(([n, r]) => [n, r*o.P, "seg-4"]),
+    ];
+    if (o.com > 0) rows.push([comLabel, o.com, "seg-8"]);
+    if (o.ir > 0) rows.push([`IR sobre o lucro (${pct(M.t.profit)})`, o.ir, "seg-3"]);
+    rows.push([o.lucro >= 0 ? "Lucro líquido" : "Prejuízo", o.lucro, o.lucro >= 0 ? "seg-1" : "seg-7"]);
+    return rows;
+  }
+  function comLabelFor(c) { return `Comissão do revendedor (${pct(c)}${S.base === "lucro" ? " do lucro" : ""})`; }
+
+  // ---------- Renderização ----------
+  function statusPills(el, m) {
+    let cls = "good", txt = "Margem saudável";
+    if (!isFinite(m)) { cls = "bad"; txt = "Custos somam 100% ou mais: não há preço que feche"; }
+    else if (m < 0) { cls = "bad"; txt = "Prejuízo nesse preço"; }
+    else if (m < 0.08) { cls = "warn"; txt = "Margem apertada"; }
+    el.innerHTML = `<span class="pill ${cls}">${txt}</span>`;
+  }
+  function breakdown(barEl, tblEl, rows, P) {
+    const ok = isFinite(P) && P > 0;
+    barEl.innerHTML = ok ? rows.filter(r => r[1] > 0).map(([n, v, c]) =>
+      `<span title="${n}: ${brl(v)}" style="width:${(v/P*100).toFixed(2)}%;background:var(--${c})"></span>`).join("") : "";
+    tblEl.innerHTML = rows.map(([n, v, c]) =>
+      `<tr><td><span class="dot" style="background:var(--${c})"></span>${n}</td><td class="n">${brl(v)}</td><td class="p">${ok ? pct(v/P) : ""}</td></tr>`).join("")
+      + `<tr class="total"><td>Preço de venda</td><td class="n">${ok ? brl(P) : "—"}</td><td class="p">${ok ? "100%" : ""}</td></tr>`;
+  }
+  function taxSummary(t) {
+    const parts = [];
+    if (t.pct.length) parts.push(pct(t.pctTotal, 2) + " do preço");
+    if (t.fixTotal > 0) parts.push(brl(t.fixTotal) + " por unidade");
+    if (t.profit > 0) parts.push(pct(t.profit) + " do lucro");
+    return parts.join(" + ") || "0%";
+  }
+
+  let D, R, oD, oR; // último cálculo, usado também pelo PDF
+  function render(skip) {
+    const simples = S.regime.startsWith("simples");
+    $("box-simples").hidden = !simples;
+    $("box-presumido").hidden = S.regime !== "presumido";
+    $("box-manual").hidden = S.regime !== "manual";
+    $("box-mei").hidden = S.regime !== "mei";
+    $("box-pf").hidden = S.regime !== "pf";
+    $("f-destino").hidden = S.operacao === "interna";
+    const ia = icmsAuto();
+    $("icms").placeholder = String(ia.r);
+    $("icmsTxt").textContent = ia.txt + " Deixe vazio para usar o automático.";
+    const t = taxes();
+    $("taxTotal").textContent = taxSummary(t);
+    if (simples) {
+      const s = t.simples;
+      $("faixaTxt").textContent = `${s.faixa}ª faixa · nominal ${String(s.nom).replace(".", ",")}% · efetiva ${pct(s.ef, 2)}`;
+    }
+    let note = "";
+    if (simples) {
+      note = `<b>Simples Nacional:</b> o ICMS, PIS, COFINS, IRPJ e CSLL já estão dentro do DAS, então a alíquota não muda de estado para estado. `
+        + (S.origem === "SC" ? `Em SC, se o produto tiver <b>substituição tributária</b> (ICMS-ST), a parcela de ICMS sai do DAS e a carga efetiva fica menor. ` : "")
+        + (S.operacao !== "interna" ? `Empresas do Simples hoje não recolhem DIFAL nas vendas a consumidor final de outro estado (STF, ADI 5464).` : "");
+    } else if (S.regime === "presumido") {
+      note = `<b>Lucro Presumido:</b> ICMS + PIS 0,65% + COFINS 3% (cumulativos) + IRPJ/CSLL sobre receita presumida. `
+        + (S.origem === "SC" && S.operacao === "interna" ? `Em SC muitas mercadorias vendidas a <b>outras empresas</b> pagam 12% em vez de 17%; se for o seu caso, digite 12 no ICMS. ` : "")
+        + `O ICMS pago na compra gera crédito, que não está considerado aqui.`;
+    } else if (S.regime === "mei") {
+      note = `<b>MEI:</b> o imposto é um valor fixo por mês (DAS), não uma porcentagem da venda. Aqui ele é dividido pelas unidades que você vende no mês: `
+        + `vendendo mais, o imposto por unidade cai. Limite de faturamento: R$ 81 mil por ano. O MEI não paga DIFAL nem ICMS por nota.`;
+    } else if (S.regime === "pf") {
+      note = `<b>Pessoa física:</b> não existe imposto por nota na venda de pessoa física. Venda eventual de bens próprios até R$ 35 mil por mês é isenta. `
+        + `Quem revende com frequência deveria ter CNPJ (o MEI costuma sair mais barato); enquanto isso, separe uma reserva de IR sobre o lucro (de 0% a 27,5% conforme a renda).`;
+    } else note = "Use quando o contador já te passou a carga tributária total sobre a venda.";
+    $("taxNote").innerHTML = note;
+
+    for (const c of COSTS) $("row-" + c.id).classList.toggle("off", !S.costs[c.id].on);
+    $("locBox").classList.toggle("off", !S.loc.on);
+    $("locPer").textContent = brl(locPerUnit()) + " / unid.";
+
+    // ---- Venda direta
+    D = model(false);
+    if (S.lockD === "m") S.preco = priceFor(D, num(S.margem)/100);
+    oD = outcome(D, num(S.preco));
+    if (S.lockD === "p") S.margem = oD.margem*100;
+    if (skip !== "margem") $("margem").value = isFinite(S.margem) ? p2(S.margem) : "";
+    if (skip !== "preco") $("preco").value = isFinite(S.preco) ? p2(S.preco) : "";
+    if (skip !== "margemRange") $("margemRange").value = isFinite(S.margem) ? S.margem : 0;
+    $("lv-m").classList.toggle("primary", S.lockD === "m"); $("lv-p").classList.toggle("primary", S.lockD === "p");
+    statusPills($("statusD"), S.lockD === "m" && !isFinite(S.preco) ? NaN : oD.margem);
+    $("kLucro").textContent = brl(oD.lucro);
+    $("kMarkup").textContent = isFinite(oD.P) && D.produto > 0 ? dec(oD.P/D.produto) + "×" : "—";
+    $("kMin").textContent = brl(priceFor(D, 0));
+    breakdown($("barD"), $("brkD"), rowsFor(D, oD), oD.P);
+
+    // ---- Revendedor
+    R = model(true);
+    const c = num(S.comissao)/100;
+    if (S.lockR === "m") S.precoR = priceFor(R, num(S.margemR)/100, c, S.base);
+    oR = outcome(R, num(S.precoR), c, S.base);
+    if (S.lockR === "p") S.margemR = oR.margem*100;
+    if (skip !== "margemR") $("margemR").value = isFinite(S.margemR) ? p2(S.margemR) : "";
+    if (skip !== "precoR") $("precoR").value = isFinite(S.precoR) ? p2(S.precoR) : "";
+    $("lv-mr").classList.toggle("primary", S.lockR === "m"); $("lv-pr").classList.toggle("primary", S.lockR === "p");
+    $("baseVenda").setAttribute("aria-pressed", S.base === "venda"); $("baseLucro").setAttribute("aria-pressed", S.base === "lucro");
+    statusPills($("statusR"), S.lockR === "m" && !isFinite(S.precoR) ? NaN : oR.margem);
+    $("rCom").textContent = brl(oR.com);
+    $("rLucro").textContent = brl(oR.lucro);
+    $("rDireto").textContent = brl(S.preco);
+    const diff = oR.P - S.preco;
+    $("rDiff").textContent = isFinite(diff) ? (diff >= 0 ? "+" : "") + brl(diff) : "—";
+    breakdown($("barR"), $("brkR"), rowsFor(R, oR, comLabelFor(c)), oR.P);
+
+    $("tblR").innerHTML = `<thead><tr><th>Comissão</th><th>Preço revendedor</th><th>Comissão R$</th><th>Meu lucro</th></tr></thead><tbody>`
+      + commissionTable().map(r => `<tr class="${r.cur ? "cur" : ""}"><td>${r.l}</td><td>${brl(r.P)}</td><td>${isFinite(r.P) ? brl(r.o.com) : "—"}</td><td>${isFinite(r.P) ? brl(r.o.lucro) : "—"}</td></tr>`).join("")
+      + "</tbody>";
+
+    $("tab-direta").setAttribute("aria-selected", S.tab === "direta");
+    $("tab-rev").setAttribute("aria-selected", S.tab === "rev");
+    $("view-direta").hidden = S.tab !== "direta";
+    $("view-rev").hidden = S.tab !== "rev";
+    save();
+  }
+  function commissionTable() {
+    const c = num(S.comissao)/100, mR = num(S.margemR)/100;
+    const levels = [...new Set([5,10,15,20,25,30, Math.round(c*1000)/10])].sort((a, b) => a - b);
+    return levels.map(l => {
+      const P = priceFor(R, mR, l/100, S.base);
+      return { l: String(l).replace(".", ",") + "%", P, o: outcome(R, P, l/100, S.base), cur: Math.abs(l/100 - c) < 1e-9 };
+    });
+  }
+
+  // ---------- PDF ----------
+  const RGB = {
+    ink:[20,32,28], muted:[91,104,99], line:[217,224,221], soft:[220,235,229], surf:[246,248,247],
+    deep:[17,49,40], accent:[30,90,72], brass:[154,107,34], brassL:[215,166,89], mint:[178,208,196],
+    "seg-1":[30,90,72], "seg-3":[154,107,34], "seg-4":[201,161,94], "seg-5":[122,140,134],
+    "seg-6":[182,194,189], "seg-7":[176,60,42], "seg-8":[107,79,160]
+  };
+  const t1 = s => String(s).replace(/ | /g, " ");
+  function buildPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:"mm", format:"a4" });
+    const W = 210, H = 297, X = 16, CW = W - 2*X;
+    const name = (S.productName || "Produto").trim();
+    const hoje = new Date().toLocaleDateString("pt-BR", { day:"2-digit", month:"long", year:"numeric" });
+    const t = D.t;
+
+    // Cabeçalho
+    doc.setFillColor(...RGB.deep); doc.rect(0, 0, W, 70, "F");
+    doc.setFillColor(...RGB.accent); doc.rect(0, 67, W, 3, "F");
+    doc.setDrawColor(...RGB.brassL); doc.setLineWidth(0.5); doc.line(X, 16.5, X + 10, 16.5);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(7.5); doc.setTextColor(...RGB.brassL);
+    doc.setCharSpace(1.4); doc.text("FICHA DE PRECIFICAÇÃO", X + 14, 17.6); doc.setCharSpace(0);
+    doc.setFontSize(7.5); doc.setTextColor(...RGB.mint); doc.setFont("helvetica", "normal");
+    doc.text(t1(hoje), W - X, 17.6, { align:"right" });
+    doc.setFont("helvetica", "bold"); doc.setFontSize(22); doc.setTextColor(255, 255, 255);
+    const title = doc.splitTextToSize(name, CW).slice(0, 2);
+    doc.text(title, X, 31, { lineHeightFactor: 1.15 });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...RGB.mint);
+    const sub = [REGIMES[S.regime], S.regime.startsWith("simples") || S.regime === "presumido" ? `${S.origem} · ${OPS[S.operacao]}${S.operacao !== "interna" ? " (" + S.destino + ")" : ""}` : null, "Impostos: " + t1(taxSummary(t))].filter(Boolean).join("   ·   ");
+    doc.text(sub, X, 31 + title.length * 9.5);
+
+    // Cartões de destaque
+    const kpis = [
+      ["PREÇO DE VENDA", brl(oD.P), true],
+      ["LUCRO POR UNIDADE", brl(oD.lucro)],
+      ["MARGEM LÍQUIDA", pct(oD.margem)],
+      ["MARKUP SOBRE CUSTO", isFinite(oD.P) && D.produto > 0 ? dec(oD.P/D.produto) + "×" : "—"],
+    ];
+    const gap = 4, cw = (CW - gap*3) / 4, ky = 55;
+    kpis.forEach(([l, v, hl], i) => {
+      const x = X + i*(cw + gap);
+      doc.setFillColor(...(hl ? RGB.accent : [255,255,255])); doc.setDrawColor(...(hl ? RGB.accent : RGB.line)); doc.setLineWidth(0.3);
+      doc.roundedRect(x, ky, cw, 24, 2.5, 2.5, "FD");
+      doc.setFont("helvetica", "bold"); doc.setFontSize(6); doc.setCharSpace(0.35);
+      doc.setTextColor(...(hl ? RGB.mint : RGB.muted)); doc.text(l, x + 4, ky + 7.5); doc.setCharSpace(0);
+      doc.setFontSize(14); doc.setTextColor(...(hl ? [255,255,255] : RGB.ink)); doc.text(t1(v), x + 4, ky + 17.5);
+    });
+    let y = ky + 36;
+
+    const ensure = need => { if (y + need > H - 22) { doc.addPage(); y = 20; } };
+    // Reserva espaço para o título e a tabela inteira (quando cabe numa página), para não separar os dois.
+    const section = (eyebrow, title, rows=3) => {
+      ensure(Math.min(20 + (rows + 1) * 8.6, 150));
+      doc.setFont("helvetica", "bold"); doc.setFontSize(6.8); doc.setTextColor(...RGB.brass); doc.setCharSpace(1);
+      doc.text(eyebrow.toUpperCase(), X, y); doc.setCharSpace(0);
+      doc.setFontSize(13); doc.setTextColor(...RGB.ink); doc.text(title, X, y + 6.5);
+      y += 10.5;
+    };
+    const table = (head, body, opts={}) => {
+      doc.autoTable(Object.assign({
+        startY: y, margin: { left: X, right: X, bottom: 22 }, head: [head], body, theme: "plain",
+        styles: { font:"helvetica", fontSize:9, textColor:RGB.ink, cellPadding:{ top:2.6, bottom:2.6, left:2.5, right:2.5 }, lineColor:RGB.line, lineWidth:{ bottom:0.2 }, valign:"middle" },
+        headStyles: { fontSize:6.8, fontStyle:"bold", textColor:RGB.muted, fillColor:RGB.surf, lineWidth:0 },
+        didParseCell: d => { if (d.column.index > 0) d.cell.styles.halign = "right"; if (opts.parse) opts.parse(d); },
+        didDrawCell: opts.draw,
+      }, opts.extra || {}));
+      y = doc.lastAutoTable.finalY + 11;
+    };
+
+    // 1. Composição do preço
+    const comp = (M, o, label) => {
+      const rows = rowsFor(M, o, label);
+      if (isFinite(o.P) && o.P > 0) {
+        ensure(40);
+        let bx = X; const bw = CW, bh = 4.2;
+        doc.setFillColor(...RGB.surf); doc.roundedRect(X, y, bw, bh, 2, 2, "F");
+        rows.filter(r => r[1] > 0).forEach(([, v, c]) => { const w = v/o.P*bw; doc.setFillColor(...RGB[c]); doc.rect(bx, y, w, bh, "F"); bx += w; });
+        y += bh + 4;
+      }
+      const body = rows.map(([n, v]) => [t1(n), t1(brl(v)), isFinite(o.P) ? t1(pct(v/o.P)) : ""]);
+      body.push(["Preço de venda", t1(brl(o.P)), "100%"]);
+      table(["ITEM", "VALOR", "% DO PREÇO"], body, {
+        extra: { columnStyles: { 0:{ cellPadding:{ top:2.6, bottom:2.6, left:8, right:2.5 } }, 2:{ cellWidth:26 }, 1:{ cellWidth:34 } } },
+        parse: d => { if (d.section === "body" && d.row.index === body.length - 1) { d.cell.styles.fontStyle = "bold"; d.cell.styles.fillColor = RGB.soft; d.cell.styles.textColor = RGB.accent; d.cell.styles.lineWidth = 0; }
+                      if (d.section === "head" && d.column.index === 0) d.cell.styles.cellPadding = { top:2.6, bottom:2.6, left:8, right:2.5 }; },
+        draw: d => { if (d.section === "body" && d.column.index === 0 && d.row.index < rows.length) {
+          doc.setFillColor(...RGB[rows[d.row.index][2]]); doc.roundedRect(d.cell.x + 2.6, d.cell.y + d.cell.height/2 - 1.3, 2.6, 2.6, 0.6, 0.6, "F"); } },
+      });
+    };
+    section("Venda direta", "Para onde vai cada real", rowsFor(D, oD).length + 2);
+    comp(D, oD);
+
+    // 2. Custos considerados
+    const custos = [["Custo efetivo do produto", "por unidade", brl(num(S.custo))]];
+    if (num(S.freteCompra) > 0) custos.push(["Frete de compra", "por unidade", brl(num(S.freteCompra))]);
+    if (num(S.extras) > 0) custos.push(["Outros extras", "por unidade", brl(num(S.extras))]);
+    for (const c of COSTS) { const st = S.costs[c.id]; if (st.on) custos.push([c.name, c.kind === "pct" ? "% do preço" : "por unidade", c.kind === "pct" ? pct(num(st.v)/100) : brl(num(st.v))]); }
+    if (S.loc.on) { const L = S.loc; custos.push(["Locomoção (entrega pessoal)", `${dec(num(L.km),1)} km · ${dec(num(L.kml),1)} km/l · ${brl(num(L.comb))}/l · ${dec(num(L.unid),0)} unid./viagem`, brl(locPerUnit())]); }
+    section("Base de cálculo", "Custos considerados", custos.length);
+    table(["ITEM", "COMO ENTRA", "VALOR"], custos.map(r => r.map(t1)), { extra: { columnStyles: { 2:{ cellWidth:30 } } } });
+
+    // 3. Impostos
+    const imp = [["Regime", REGIMES[S.regime]]];
+    if (S.regime.startsWith("simples")) imp.push(["Faturamento 12 meses", brl(num(S.rbt12))], ["Faixa do Simples", `${t.simples.faixa}ª faixa · nominal ${dec(t.simples.nom)}%`]);
+    if (S.regime === "mei") imp.push(["DAS mensal", brl(num(S.mei.das))], ["Unidades por mês", dec(num(S.mei.vendas), 0)]);
+    if (S.regime.startsWith("simples") || S.regime === "presumido") imp.push(["Estado e operação", `${S.origem} · ${OPS[S.operacao]}${S.operacao !== "interna" ? " para " + S.destino : ""}`]);
+    t.pct.forEach(([n, r]) => imp.push([n, pct(r, 2) + " do preço"]));
+    t.fix.forEach(([n, v]) => imp.push([n, brl(v) + " por unidade"]));
+    if (t.profit > 0) imp.push(["IR sobre o lucro (reserva)", pct(t.profit) + " do lucro"]);
+    imp.push(["Carga total", taxSummary(t)]);
+    section("Tributação", "Impostos sobre a venda", imp.length);
+    table(["ITEM", "VALOR"], imp.map(r => r.map(t1)), {
+      parse: d => { if (d.section === "body" && d.row.index === imp.length - 1) { d.cell.styles.fontStyle = "bold"; } } });
+
+    // 4. Revendedor
+    const c = num(S.comissao)/100;
+    section("Revendedor", "Preço para venda com comissão", 6);
+    table(["ITEM", "VALOR"], [
+      ["Comissão do revendedor", `${pct(c)} sobre ${S.base === "lucro" ? "o lucro" : "o preço de venda"}`],
+      ["Custos de cartão, marketplace e marketing", S.revPaga ? "pagos pelo revendedor" : "pagos por você"],
+      ["Preço que o revendedor deve praticar", brl(oR.P)],
+      ["Comissão por unidade", brl(oR.com)],
+      ["Seu lucro por unidade", `${brl(oR.lucro)} (${pct(oR.margem)})`],
+      ["Diferença para a venda direta", (oR.P - oD.P >= 0 ? "+" : "") + brl(oR.P - oD.P)],
+    ].map(r => r.map(t1)), { parse: d => { if (d.section === "body" && d.row.index === 2) { d.cell.styles.fontStyle = "bold"; d.cell.styles.textColor = RGB.accent; } } });
+    const ct = commissionTable();
+    section("Revendedor", "Tabela de comissões", ct.length);
+    table(["COMISSÃO", "PREÇO REVENDEDOR", "COMISSÃO R$", "SEU LUCRO"],
+      ct.map(r => [r.l, brl(r.P), isFinite(r.P) ? brl(r.o.com) : "—", isFinite(r.P) ? brl(r.o.lucro) : "—"].map(t1)),
+      { parse: d => { if (d.section === "body" && ct[d.row.index].cur) { d.cell.styles.fillColor = RGB.soft; d.cell.styles.textColor = RGB.accent; d.cell.styles.fontStyle = "bold"; } } });
+    section("Revendedor", "Composição do preço do revendedor", rowsFor(R, oR, comLabelFor(c)).length + 2);
+    comp(R, oR, comLabelFor(c));
+
+    // Rodapé em todas as páginas
+    const n = doc.getNumberOfPages();
+    for (let i = 1; i <= n; i++) {
+      doc.setPage(i);
+      doc.setDrawColor(...RGB.line); doc.setLineWidth(0.2); doc.line(X, H - 15, W - X, H - 15);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(6.8); doc.setTextColor(...RGB.muted);
+      doc.text(doc.splitTextToSize("Estimativa para planejamento; não substitui a orientação do seu contador. Alíquotas de ICMS modais de 2026, sem FCP nem benefícios fiscais por produto.", CW - 30), X, H - 10.5);
+      doc.setFont("helvetica", "bold"); doc.text(`${i} / ${n}`, W - X, H - 10.5, { align:"right" });
+    }
+    return doc;
+  }
+
+  // claude.use só existe dentro do visualizador do Claude; fora dele, o download é direto.
+  const downloadsP = window.claude?.use ? window.claude.use("downloads").catch(() => null) : Promise.resolve(null);
+  let toastT;
+  function toast(msg) { const el = $("toast"); el.textContent = msg; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 3800); }
+  $("pdfBtn").addEventListener("click", async () => {
+    if (!window.jspdf) { toast("O gerador de PDF não carregou. Verifique a conexão e recarregue a página."); return; }
+    const btn = $("pdfBtn"); btn.disabled = true;
+    try {
+      const doc = buildPDF();
+      const filename = `Precificação - ${(S.productName || "Produto").replace(/[\\/:*?"<>|]+/g, " ").trim().slice(0, 80)}.pdf`;
+      const blob = doc.output("blob");
+      const dl = window.claude?.use ? await downloadsP : null;
+      if (dl) {
+        try { await dl.save({ filename, data: blob }); toast("PDF salvo."); }
+        catch (e) {
+          if (e?.code === "declined") toast("Download cancelado.");
+          else if (e?.code === "rate_limited") toast("Já existe um download aguardando confirmação.");
+          else toast("Não foi possível salvar o PDF aqui.");
+        }
+      } else {
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename;
+        document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        toast("PDF gerado.");
+      }
+    } catch (e) { console.error(e); toast("Erro ao gerar o PDF."); }
+    finally { btn.disabled = false; }
+  });
+
+  // ---------- Ligações ----------
+  const getK = k => k.split(".").reduce((o, p) => o[p], S);
+  const setK = (k, v) => { const ps = k.split("."); ps.slice(0, -1).reduce((o, p) => o[p], S)[ps.at(-1)] = v; };
+  function fillInputs() {
+    for (const k of ["productName","custo","freteCompra","extras","regime","origem","operacao","destino","rbt12","simplesOverride","icms","pis","cofins","irpj","manual","comissao"])
+      $(k).value = S[k] ?? "";
+    document.querySelectorAll("[data-k]").forEach(el => el.value = getK(el.dataset.k));
+    $("importado").checked = !!S.importado; $("revPaga").checked = !!S.revPaga; $("loc_on").checked = !!S.loc.on;
+    for (const c of COSTS) { $("on-" + c.id).checked = S.costs[c.id].on; $("v-" + c.id).value = S.costs[c.id].v; }
+  }
+  const bind = (id, key, ev="input") => $(id).addEventListener(ev, e => { S[key] = e.target.value; render(id); });
+  ["productName","custo","freteCompra","extras","rbt12","simplesOverride","icms","pis","cofins","irpj","manual","comissao"].forEach(k => bind(k, k));
+  ["regime","origem","operacao","destino"].forEach(k => bind(k, k, "change"));
+  document.querySelectorAll("[data-k]").forEach(el => el.addEventListener("input", e => { setK(el.dataset.k, e.target.value); render(el.id); }));
+  $("loc_on").addEventListener("change", e => { S.loc.on = e.target.checked; render(); });
+  $("importado").addEventListener("change", e => { S.importado = e.target.checked; render(); });
+  $("revPaga").addEventListener("change", e => { S.revPaga = e.target.checked; render(); });
+  for (const c of COSTS) {
+    $("on-" + c.id).addEventListener("change", e => { S.costs[c.id].on = e.target.checked; render(); });
+    $("v-" + c.id).addEventListener("input", e => { S.costs[c.id].v = e.target.value; render("v-" + c.id); });
+  }
+  $("margem").addEventListener("input", e => { S.lockD = "m"; S.margem = num(e.target.value); render("margem"); });
+  $("margemRange").addEventListener("input", e => { S.lockD = "m"; S.margem = num(e.target.value); render("margemRange"); });
+  $("preco").addEventListener("input", e => { S.lockD = "p"; S.preco = num(e.target.value); render("preco"); });
+  $("margemR").addEventListener("input", e => { S.lockR = "m"; S.margemR = num(e.target.value); render("margemR"); });
+  $("precoR").addEventListener("input", e => { S.lockR = "p"; S.precoR = num(e.target.value); render("precoR"); });
+  $("baseVenda").addEventListener("click", () => { S.base = "venda"; render(); });
+  $("baseLucro").addEventListener("click", () => { S.base = "lucro"; render(); });
+  $("tab-direta").addEventListener("click", () => { S.tab = "direta"; render(); });
+  $("tab-rev").addEventListener("click", () => { S.tab = "rev"; render(); });
+  $("reset").addEventListener("click", () => { S = clone(DEFAULTS); fillInputs(); render(); });
+  if (location.hash === "#revendedor") S.tab = "rev";
+
+  fillInputs();
+  render();
+})();
+</script>
