@@ -7,6 +7,7 @@ import { dietNutrients, itemGrams, mealNutrients } from './diet';
 import { date, num, todayIso } from './format';
 import { patientMetrics } from './patientMetrics';
 import { findEquivalents, practicalGrams } from './substitutions';
+import { saveFile } from './download';
 
 // PDFs com a identidade Seu NutriAI. Fontes padrão do PDF (Helvetica) cobrem
 // Latin-1; caracteres fora disso são trocados em `t()`.
@@ -181,14 +182,8 @@ function fileName(kind: string, patient: Patient): string {
   return `${kind} - ${slug(patient.name)} - ${date(todayIso()).replace(/\//g, '-')}.pdf`;
 }
 
-/** Salva o PDF; dentro de um artefato do Claude usa a ponte de downloads quando existir. */
-async function save(doc: Doc, name: string) {
-  const bridge = (window as unknown as { claude?: { downloads?: { save?: (b: Blob, n: string) => Promise<unknown> } } }).claude?.downloads;
-  if (bridge?.save) {
-    await bridge.save(doc.output('blob'), name);
-    return;
-  }
-  doc.save(name);
+function save(doc: Doc, name: string): Promise<void> {
+  return saveFile(name, doc.output('blob'));
 }
 
 // ---------------------------------------------------------------------------

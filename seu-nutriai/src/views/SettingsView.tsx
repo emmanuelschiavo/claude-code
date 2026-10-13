@@ -1,6 +1,7 @@
 import { Check, Download, RotateCcw, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Button, Card, confirmDialog, Field, Input, PageHeader } from '../components/ui';
+import { saveFile } from '../lib/download';
 import { todayIso } from '../lib/format';
 import { actions, EMPTY_PROFILE, useDb } from '../lib/store';
 import type { ProfessionalProfile } from '../types';
@@ -9,14 +10,7 @@ export function SettingsView() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState('');
 
-  const download = () => {
-    const blob = new Blob([actions.exportJson()], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `seu-nutriai-backup-${todayIso()}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
+  const download = () => saveFile(`seu-nutriai-backup-${todayIso()}.json`, new Blob([actions.exportJson()], { type: 'application/json' }));
 
   const restore = async (file: File) => {
     try {
