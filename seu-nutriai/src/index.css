@@ -1,0 +1,68 @@
+@import 'tailwindcss';
+
+/* Identidade Seu NutriAI: verde-floresta profundo, neutros com leve tom verde
+   e detalhes em dourado. Títulos em Bricolage Grotesque, texto em Figtree. */
+@theme {
+  --font-sans: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Figtree', ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #eef7f3;
+  --color-brand-100: #d5ece2;
+  --color-brand-200: #acd8c6;
+  --color-brand-300: #7cbea5;
+  --color-brand-400: #4f9f84;
+  --color-brand-500: #2f8469;
+  --color-brand-600: #1f6b55;
+  --color-brand-700: #195646;
+  --color-brand-800: #154539;
+  --color-brand-900: #0f322a;
+  --color-brand-950: #0a211c;
+
+  --color-gold-100: #f6eedd;
+  --color-gold-300: #e2c896;
+  --color-gold-400: #d1ad6c;
+  --color-gold-500: #b8925a;
+  --color-gold-600: #9a7745;
+
+  --color-slate-50: #f6f8f7;
+  --color-slate-100: #edf1ef;
+  --color-slate-200: #dfe5e2;
+  --color-slate-300: #c7d0cc;
+  --color-slate-400: #93a09a;
+  --color-slate-500: #66746e;
+  --color-slate-600: #4b5853;
+  --color-slate-700: #37423e;
+  --color-slate-800: #222c29;
+  --color-slate-900: #141c1a;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-slate-50);
+    color: var(--color-slate-800);
+    font-feature-settings: 'tnum' 1;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
