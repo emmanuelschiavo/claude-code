@@ -1,6 +1,8 @@
 import { Apple, CalendarDays, LayoutDashboard, Menu, Settings, Users, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { BrandMark } from './components/BrandMark';
+import { ObsidianPill } from './components/ObsidianPanel';
+import { ToastHost } from './components/Toasts';
 import { ConfirmHost, cx } from './components/ui';
 import { useDb } from './lib/store';
 import { DashboardView } from './views/DashboardView';
@@ -101,7 +103,9 @@ export default function App() {
           })}
         </nav>
 
-        <a href="#/config" className="mt-auto flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 transition hover:bg-white/10">
+        <div className="mt-auto" />
+        <ObsidianPill />
+        <a href="#/config" className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 transition hover:bg-white/10">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-400 font-display text-sm font-semibold text-brand-950">
             {(profile?.name || 'N').trim().charAt(0).toUpperCase()}
           </span>
@@ -124,6 +128,7 @@ export default function App() {
         </div>
       </main>
       <ConfirmHost />
+      <ToastHost />
     </div>
   );
 }

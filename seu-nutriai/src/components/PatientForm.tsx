@@ -1,4 +1,5 @@
-import type { Patient, PatientStatus, Sex } from '../types';
+import { ACTIVITY_LABELS, GOAL_LABELS, inferActivity, inferGoal } from '../lib/intern';
+import type { ActivityLevel, GoalType, Patient, PatientStatus, Sex } from '../types';
 import { Field, Input, Select, Textarea } from './ui';
 
 export function PatientForm({ value, onChange }: { value: Patient; onChange: (p: Patient) => void }) {
@@ -25,6 +26,29 @@ export function PatientForm({ value, onChange }: { value: Patient; onChange: (p:
       </Field>
       <Field label="Objetivo" className="sm:col-span-2">
         <Input value={value.goal} placeholder="Ex.: hipertrofia, emagrecimento, controle glicêmico" onChange={(e) => set('goal', e.target.value)} />
+      </Field>
+      <Field label="Tipo de objetivo" hint={value.goalType ? undefined : `Automático: ${GOAL_LABELS[inferGoal(value.goal)]}`}>
+        <Select value={value.goalType ?? ''} onChange={(e) => set('goalType', (e.target.value || undefined) as GoalType | undefined)}>
+          <option value="">Automático (pelo texto do objetivo)</option>
+          {Object.entries(GOAL_LABELS).map(([k, v]) => (
+            <option key={k} value={k}>
+              {v}
+            </option>
+          ))}
+        </Select>
+      </Field>
+      <Field
+        label="Nível de atividade"
+        hint={value.activityLevel ? undefined : `Automático: ${ACTIVITY_LABELS[inferActivity(value.anamnesis.physicalActivity) ?? 'leve']}`}
+      >
+        <Select value={value.activityLevel ?? ''} onChange={(e) => set('activityLevel', (e.target.value || undefined) as ActivityLevel | undefined)}>
+          <option value="">Automático (pela anamnese)</option>
+          {Object.entries(ACTIVITY_LABELS).map(([k, v]) => (
+            <option key={k} value={k}>
+              {v}
+            </option>
+          ))}
+        </Select>
       </Field>
       <Field label="Status">
         <Select value={value.status} onChange={(e) => set('status', e.target.value as PatientStatus)}>

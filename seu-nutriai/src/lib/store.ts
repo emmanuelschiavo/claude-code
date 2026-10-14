@@ -72,6 +72,11 @@ export function setStorageAdapter(next: StorageAdapter) {
   emit();
 }
 
+/** Notifica a cada alteração do banco (usado pela sincronização com o Obsidian). */
+export function subscribeDb(l: () => void): () => void {
+  return subscribe(l);
+}
+
 function subscribe(l: () => void) {
   listeners.add(l);
   return () => listeners.delete(l);
@@ -109,6 +114,10 @@ export function useFoods(): Food[] {
   return useDb(allFoods);
 }
 
+export function getFoods(): Food[] {
+  return allFoods(state);
+}
+
 export function findFood(id: string): Food | undefined {
   allFoods(state);
   return foodIndex.get(id);
@@ -124,6 +133,10 @@ export const actions = {
   },
   updatePatient(id: string, update: (p: Patient) => Patient) {
     commit({ ...state, patients: state.patients.map((p) => (p.id === id ? update(p) : p)) });
+  },
+  upsertPatient(p: Patient) {
+    const exists = state.patients.some((x) => x.id === p.id);
+    commit({ ...state, patients: exists ? state.patients.map((x) => (x.id === p.id ? p : x)) : [...state.patients, p] });
   },
   deletePatient(id: string) {
     commit({

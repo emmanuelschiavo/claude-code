@@ -1,4 +1,5 @@
 import { Flame } from 'lucide-react';
+import { InternCard } from '../../components/InternCard';
 import { Badge, Card, cx, EmptyState, Field, NumberInput, Select, Stat } from '../../components/ui';
 import {
   ACTIVITY_FACTORS,
@@ -39,6 +40,7 @@ export function EnergyTab({ patient, update }: TabProps) {
 
   return (
     <div className="space-y-6">
+      <InternCard patient={patient} update={update} />
       <div className="grid gap-4 sm:grid-cols-3">
         <Stat icon={<Flame size={20} />} label={plan.formula === 'kcal-kg' ? 'Gasto por kcal/kg' : plan.formula === 'dri-iom' ? 'EER (DRI)' : 'Taxa metabólica basal'} value={`${num(energy.bmr, 0)} kcal`} />
         <Stat icon={<Flame size={20} />} tone="amber" label="Gasto energético total (GET)" value={`${num(energy.get, 0)} kcal`} />

@@ -99,6 +99,11 @@ export function PatientsView() {
                     </td>
                     <td className="px-4 py-3">
                       <Badge tone={STATUS_TONE[p.status]}>{STATUS_LABEL[p.status]}</Badge>
+                      {p.intern && !p.intern.reviewed && (
+                        <span className="ml-1.5">
+                          <Badge tone="gold">Estagiário: revisar</Badge>
+                        </span>
+                      )}
                     </td>
                   </tr>
                 );

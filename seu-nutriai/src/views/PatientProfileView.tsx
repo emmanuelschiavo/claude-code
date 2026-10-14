@@ -91,6 +91,14 @@ export function PatientProfileView({ id, tab }: { id: string; tab?: string }) {
                 <span className={cx('h-1.5 w-1.5 rounded-full', patient.status === 'ativo' ? 'bg-brand-300' : patient.status === 'alta' ? 'bg-sky-300' : 'bg-slate-400')} />
                 {STATUS_LABEL[patient.status]}
               </span>
+              {patient.intern && !patient.intern.reviewed && (
+                <a
+                  href={`#/pacientes/${patient.id}/energia`}
+                  className="mt-2 ml-2 inline-flex items-center gap-1.5 rounded-full bg-gold-400 px-2.5 py-0.5 text-xs font-semibold text-brand-950 hover:bg-gold-300"
+                >
+                  Estagiário: revisar cálculos
+                </a>
+              )}
             </div>
           </div>
           <div className="flex flex-wrap gap-2">

@@ -18,12 +18,33 @@ export interface Patient {
   notes: string;
   /** % de gordura desejado, usado para estimar o peso-meta. */
   targetFatPercent?: number;
+  /** Tipo de objetivo; quando vazio é inferido do texto de `goal`. */
+  goalType?: GoalType;
+  /** Nível de atividade física; quando vazio é inferido da anamnese. */
+  activityLevel?: ActivityLevel;
+  /** Último cálculo feito pelo estagiário, aguardando revisão. */
+  intern?: InternReport;
   createdAt: string;
   anamnesis: Anamnesis;
   assessments: Assessment[];
   energy: EnergyPlan;
   diet: DietPlan;
   supplements: Supplement[];
+}
+
+export type GoalType = 'emagrecimento' | 'hipertrofia' | 'recomposicao' | 'manutencao' | 'saude';
+
+export type ActivityLevel = 'sedentario' | 'leve' | 'moderado' | 'intenso' | 'atleta';
+
+export interface InternReport {
+  generatedAt: string;
+  /** De onde veio o pedido: paciente novo do Obsidian, recálculo pedido no Obsidian ou no app. */
+  trigger: 'obsidian-novo' | 'obsidian-recalcular' | 'app';
+  /** Justificativas das escolhas, em texto corrido. */
+  notes: string[];
+  /** Pontos que o nutricionista precisa conferir. */
+  alerts: string[];
+  reviewed: boolean;
 }
 
 // ---------- Anamnese ----------

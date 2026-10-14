@@ -1,4 +1,4 @@
-import type { Food } from '../types';
+import type { Food, Meal } from '../types';
 
 // Converte um plano alimentar em texto livre em refeições e itens.
 // Formato aceito (flexível):
@@ -23,6 +23,7 @@ export interface ParsedMeal {
   name: string;
   time: string;
   items: ParsedItem[];
+  notes: string;
 }
 
 const MEAL_KEYWORDS = [
@@ -121,11 +122,8 @@ export function matchFood(text: string, foods: Food[]): Food | undefined {
       best = food;
     }
   }
-  // Exige que a primeira palavra (normalmente o alimento) apareça no nome.
-  if (best && !tokens(best.name).includes(query[0]!)) {
-    return bestScore >= 0.5 ? best : undefined;
-  }
-  return best;
+  // Exige que pelo menos metade das palavras apareça no nome do alimento.
+  return bestScore >= 0.5 ? best : undefined;
 }
 
 function parseTime(line: string): string {
@@ -144,16 +142,45 @@ function isMealHeader(line: string): boolean {
 
 function cleanMealName(line: string): string {
   return line
-    .replace(/[-–(]?\s*\d{1,2}\s*(?:h|:)\s*\d{0,2}\s*\)?/gi, '')
-    .replace(/[:\-–()]+$/g, '')
-    .replace(/[:]/g, '')
+    .replace(/^#+\s*/, '')
+    .replace(/[-–—(]?\s*\d{1,2}\s*(?:h|:)\s*\d{0,2}\s*\)?/gi, '')
+    .replace(/[\s:\-–—]+$/g, '')
     .trim();
+}
+
+const nameIndex = new WeakMap<Food[], { norm: string; food: Food }[]>();
+
+/**
+ * Formato exato gerado pelo app: "2 fatia de Pão, trigo, forma, integral" ou
+ * "120 g de Frango, peito, sem pele, grelhado". Garante ida e volta sem perdas.
+ */
+function parseExactLine(rest: string, foods: Food[]): ParsedItem | undefined {
+  const m = rest.match(/^(\d+(?:[.,]\d+)?)\s+(.+)$/);
+  if (!m) return undefined;
+  const amount = Number(m[1]!.replace(',', '.'));
+  const tail = normalize(m[2]!);
+  let index = nameIndex.get(foods);
+  if (!index) {
+    index = foods.map((food) => ({ norm: normalize(food.name), food })).sort((a, b) => b.norm.length - a.norm.length);
+    nameIndex.set(foods, index);
+  }
+  for (const { norm, food } of index) {
+    if (!tail.endsWith(` de ${norm}`)) continue;
+    const measureText = tail.slice(0, tail.length - norm.length - 4).trim();
+    if (/^(g|gr|gramas?|ml)$/.test(measureText)) return { raw: rest, amount, measure: '', food, foodText: food.name };
+    const measure = food.measures.find((x) => normalize(x.label) === measureText);
+    if (measure) return { raw: rest, amount, measure: measure.label, food, foodText: food.name };
+  }
+  return undefined;
 }
 
 export function parseItemLine(line: string, foods: Food[]): ParsedItem | undefined {
   let rest = line.replace(/^\s*([-*•·]|\d+[.)])\s+/, '').trim();
   if (!rest) return undefined;
   const raw = rest;
+
+  const exact = parseExactLine(rest, foods);
+  if (exact) return exact;
 
   // Quantidade numérica (2, 1,5, 1/2) ou por extenso.
   let amount = 1;
@@ -203,12 +230,11 @@ export function parseItemLine(line: string, foods: Food[]): ParsedItem | undefin
 
   if (food) {
     const key = normalize(measureKey || 'unidade');
-    const measure = food.measures.find((x) => normalize(x.label).startsWith(key)) ??
-      (measureKey ? undefined : food.measures[0]);
+    const measure = food.measures.find((x) => normalize(x.label).startsWith(key)) ?? (measureKey ? undefined : food.measures[0]);
     if (measure) return { raw, amount, measure: measure.label, food, foodText };
   }
-  // Sem medida conhecida: mantém a quantidade como gramas para revisão.
-  return { raw, amount, measure: '', food, foodText };
+  // Medida que o alimento não tem: fica como não reconhecido em vez de virar gramas.
+  return { raw, amount, measure: '', food: undefined, foodText };
 }
 
 export function parseDietText(text: string, foods: Food[]): ParsedMeal[] {
@@ -217,9 +243,15 @@ export function parseDietText(text: string, foods: Food[]): ParsedMeal[] {
   for (const rawLine of text.split(/\r?\n/)) {
     const line = rawLine.trim();
     if (!line) continue;
-    if (isMealHeader(line)) {
-      current = { name: cleanMealName(line) || 'Refeição', time: parseTime(line), items: [] };
+    // Títulos em Markdown (### Lanche) sempre abrem uma refeição.
+    if (/^#{1,6}\s/.test(line) || isMealHeader(line)) {
+      current = { name: cleanMealName(line) || 'Refeição', time: parseTime(line), items: [], notes: '' };
       meals.push(current);
+      continue;
+    }
+    const obs = line.match(/^(?:>\s*)?obs(?:erva[cç][aã]o)?\.?:\s*(.*)$/i);
+    if (obs) {
+      if (current) current.notes = [current.notes, obs[1]!].filter(Boolean).join(' ');
       continue;
     }
     // Opções alternativas ("ou ...") não entram no cálculo.
@@ -227,10 +259,21 @@ export function parseDietText(text: string, foods: Food[]): ParsedMeal[] {
     const item = parseItemLine(line, foods);
     if (!item) continue;
     if (!current) {
-      current = { name: 'Refeição', time: '', items: [] };
+      current = { name: 'Refeição', time: '', items: [], notes: '' };
       meals.push(current);
     }
     current.items.push(item);
   }
   return meals;
+}
+
+/** Converte o resultado do parser em refeições; itens não reconhecidos vão para as observações. */
+export function toMeals(parsed: ParsedMeal[]): Meal[] {
+  return parsed.map((pm) => ({
+    id: crypto.randomUUID(),
+    name: pm.name,
+    time: pm.time,
+    notes: [pm.notes, ...pm.items.filter((i) => !i.food).map((i) => `Não reconhecido: ${i.raw}`)].filter(Boolean).join(' | '),
+    items: pm.items.filter((i) => i.food).map((i) => ({ id: crypto.randomUUID(), foodId: i.food!.id, amount: i.amount, measure: i.measure })),
+  }));
 }

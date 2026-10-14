@@ -1,5 +1,6 @@
 import { Check, Download, RotateCcw, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { ObsidianCard } from '../components/ObsidianPanel';
 import { Button, Card, confirmDialog, Field, Input, PageHeader } from '../components/ui';
 import { saveFile } from '../lib/download';
 import { todayIso } from '../lib/format';
@@ -26,6 +27,8 @@ export function SettingsView() {
       <PageHeader eyebrow="Seu NutriAI" title="Configurações" subtitle="Seus dados profissionais e o backup do consultório." />
 
       <ProfileCard />
+
+      <ObsidianCard />
 
       <Card title="Backup dos dados" subtitle="Os dados ficam salvos neste navegador. Exporte um backup regularmente.">
         <div className="flex flex-wrap gap-2">

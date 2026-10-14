@@ -193,5 +193,8 @@ Ceia
     ]);
     expect(ceia!.items[0]).toMatchObject({ amount: 0.5, measure: 'xícara' });
     expect(ceia!.items[0]!.food?.id).toBe('morango');
+    // Alimento desconhecido ou medida que o alimento não tem não viram gramas
+    const odd = parseDietText('Lanche\n- 1 xícara de pão de batata mágico\n- 2 conchas de banana prata', TACO_FOODS)[0]!.items;
+    expect(odd.map((i) => i.food?.id)).toEqual([undefined, undefined]);
   });
 });

@@ -26,7 +26,19 @@ npm run build
 | Lista de compras | Ingredientes do plano por setor, para 7/14/30 dias |
 | Agenda e financeiro | Consultas, pagamentos, recebido × a receber |
 | Banco de alimentos | TACO 4ª ed. completa (597 itens, com micronutrientes) + itens USDA/rótulo + alimentos personalizados |
-| Configurações | Perfil profissional (aparece nos PDFs) e backup em JSON |
+| Configurações | Perfil profissional (aparece nos PDFs), conexão com o Obsidian e backup em JSON |
+
+## Obsidian e agente estagiário
+
+O app sincroniza os pacientes com uma pasta do seu cofre do Obsidian (Chrome ou Edge, app rodando localmente):
+
+1. Instale o kit no cofre: `npm run obsidian:instalar -- "/caminho/do/cofre"` (agente `nutri-estagiario`, skills `novo-paciente` e `montar-cardapio`, modelo de nota). Não sobrescreve arquivos existentes.
+2. No app: Configurações → Obsidian → "Escolher pasta do cofre".
+3. No terminal, dentro do cofre, peça ao Claude Code: "Paciente nova: …". O agente cria a nota em `Pacientes/`, o app importa em segundos e o estagiário calcula TMB, GET, VET e macros pelo objetivo, com alertas para você revisar.
+
+Cada paciente vira `Pacientes/<Nome>.md`; a cópia completa fica em `Pacientes/.seu-nutriai/`. Edições no topo da nota, na Anamnese, no Plano alimentar, nas Orientações e nas Observações voltam para o app. `recalcular: sim` pede um novo cálculo.
+
+CLI com os mesmos cálculos do app: `npm run -s nutri -- calcular|validar <nota.md>`, `alimentos <termo>`, `modelo`.
 
 ## Banco de alimentos
 

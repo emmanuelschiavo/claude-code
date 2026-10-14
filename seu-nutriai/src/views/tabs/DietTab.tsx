@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { FoodPicker } from '../../components/FoodPicker';
 import { Adequacy, Button, Card, confirmDialog, EmptyState, Field, IconButton, Input, Modal, NumberInput, Select, Textarea } from '../../components/ui';
 import { dietNutrients, itemGrams, itemNutrients, mealNutrients } from '../../lib/diet';
-import { parseDietText, type ParsedMeal } from '../../lib/dietParser';
+import { parseDietText, toMeals, type ParsedMeal } from '../../lib/dietParser';
 import { num } from '../../lib/format';
 import { patientMetrics } from '../../lib/patientMetrics';
 import { dietMicros, fiberReference, MICRO_KEYS, MICRO_LABELS, microReference } from '../../lib/micros';
@@ -329,16 +329,7 @@ function ImportModal({ onClose, onImport }: { onClose: () => void; onImport: (me
   const total = parsed.reduce((s, m) => s + m.items.length, 0);
 
   const confirmImport = () => {
-    const meals: Meal[] = parsed.map((pm) => ({
-      id: uid(),
-      name: pm.name,
-      time: pm.time,
-      notes: pm.items
-        .filter((i) => !i.food)
-        .map((i) => `Não reconhecido: ${i.raw}`)
-        .join(' | '),
-      items: pm.items.filter((i) => i.food).map((i) => ({ id: uid(), foodId: i.food!.id, amount: i.amount, measure: i.measure })),
-    }));
+    const meals = toMeals(parsed);
     onImport(meals, replace);
     onClose();
   };
